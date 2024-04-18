@@ -1,0 +1,58 @@
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.compile.JavaCompile
+
+plugins {
+    id 'idea'
+    id 'java'
+    id 'org.ajoberstar.grgit' version "5.2.1"
+    id "com.gorylenko.gradle-git-properties" version "2.4.1"
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+
+
+
+allprojects {
+    group "studio.talespire.core"
+    version "0.0.1"
+
+    jar {
+        archiveClassifier.set('normal-jar')
+    }
+
+    shadowJar {
+        archiveClassifier.set('')
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.encoding = 'UTF-8'
+    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'org.ajoberstar.grgit'
+    apply plugin: 'com.gorylenko.gradle-git-properties'
+
+    var versionWithGit = "$version-${grgit.head().abbreviatedId}-${grgit.branch.current().name.replace("/", "-")}".toString()
+
+    compileJava {
+        sourceCompatibility = 17
+        targetCompatibility = 17
+    }
+
+    dependencies {
+        compileOnly "org.projectlombok:lombok:1.18.32"
+        annotationProcessor "org.projectlombok:lombok:1.18.32"
+    }
+
+
+
+
+}
