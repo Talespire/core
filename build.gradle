@@ -14,7 +14,7 @@ plugins {
 
 allprojects {
     group "studio.talespire.core"
-    version "0.0.1"
+    version "1.0"
 
     jar {
         archiveClassifier.set('normal-jar')
@@ -31,6 +31,10 @@ allprojects {
     repositories {
         mavenLocal()
         mavenCentral()
+        maven {
+            name = "papermc-repo"
+            url = "https://repo.papermc.io/repository/maven-public/"
+        }
     }
 }
 
@@ -50,6 +54,16 @@ subprojects {
     dependencies {
         compileOnly "org.projectlombok:lombok:1.18.32"
         annotationProcessor "org.projectlombok:lombok:1.18.32"
+        compileOnly "org.jetbrains:annotations:13.0"
+
+        compileOnly("studio.lunarlabs.universe:universe-annotations:0.0.1")
+        annotationProcessor("studio.lunarlabs.universe:universe-annotations:0.0.1")
+    }
+    shadowJar {
+        archiveFileName = "core-${project.name}-${versionWithGit}.jar"
+
+        relocate "redis.clients.jedis", "studio.lunarlabs.relocations.jedis"
+
     }
 
 
