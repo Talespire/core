@@ -3,7 +3,10 @@ package studio.talespire.core.server.packet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.packet.RPacket;
+import studio.talespire.core.server.ServerService;
+import studio.talespire.core.server.model.Server;
 
 /**
  * @date 4/18/2024
@@ -15,5 +18,9 @@ public class ServerStopPacket implements RPacket {
     @Override
     public void receive() {
 
+    }
+
+    public Server getServer() {
+        return Universe.get(ServerService.class).getServer(serverId);
     }
 }

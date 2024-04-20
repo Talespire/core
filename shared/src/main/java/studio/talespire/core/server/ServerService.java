@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.config.ConfigService;
 import studio.lunarlabs.universe.registry.ServiceRegistry;
+import studio.lunarlabs.universe.systemtype.SystemType;
 import studio.lunarlabs.universe.util.Ref;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
@@ -13,10 +14,7 @@ import studio.talespire.core.server.model.Server;
 import studio.talespire.core.server.packet.ServerStartPacket;
 import studio.talespire.core.server.task.ServerUpdateTask;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,11 +44,32 @@ public class ServerService {
         Ref.getRedisService().publish(new ServerStartPacket(config.getServerId()));
         Universe.TASK_CHAIN.scheduleAtFixedRate(new ServerUpdateTask(), 0, 5, TimeUnit.SECONDS);
     }
+
     public void disable() {
-        if(!config.isDynamic()) {
+        if (!config.isDynamic()) {
             return;
         }
         Ref.getRedisService().publish(new ServerStartPacket(config.getServerId()));
+    }
+
+    public Collection<Server> getServers() {
+        return this.servers.values();
+    }
+    public int getNetworkPlayerCount() {
+        int count = 0;
+        for (Server server : getServers()) {
+            if(server.getPlatform() != SystemType.BUKKIT) continue;
+            count += server.getMetadataValue("bukkit:online", Integer.class);
+        }
+        return count;
+    }
+    public int getNetworkMaxPlayers() {
+        int count = 0;
+        for (Server server : getServers()) {
+            if(server.getPlatform() != SystemType.BUKKIT) continue;
+            count += server.getMetadataValue("bukkit:maxplayers", Integer.class);
+        }
+        return count;
     }
 
     public void updateCurrentSync() {
@@ -79,9 +98,11 @@ public class ServerService {
             return null;
         });
     }
+
     public void deleteServer(String serverId) {
         this.servers.remove(serverId);
     }
+
     public @Nullable Server getServer(String serverId) {
         return this.servers.get(serverId);
     }
