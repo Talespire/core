@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.placeholder.PlaceholderService;
 import studio.talespire.core.server.model.Server;
+import studio.talespire.core.utils.BukkitUtils;
 
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class BukkitServerProvider implements ServerProvider {
     public BukkitServerProvider() {
        Server currentServer = Universe.get(ServerService.class).getCurrentServer();
 
-        currentServer.getMetadata().put("bukkit:ip", Bukkit.getIp());
+        currentServer.getMetadata().put("bukkit:ip", BukkitUtils.getIp());
         currentServer.getMetadata().put("bukkit:port", Bukkit.getServer().getPort());
 
         Universe.get(PlaceholderService.class).registerPlaceholder("server", new ServerPlaceholder());
