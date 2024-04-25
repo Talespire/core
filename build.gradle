@@ -35,6 +35,14 @@ allprojects {
             name = "papermc-repo"
             url = "https://repo.papermc.io/repository/maven-public/"
         }
+
+        maven {
+            url 'https://repo.mincats.eu/public'
+        }
+
+        maven {
+            url 'https://repo.mincats.eu/mirrors'
+        }
     }
 }
 
@@ -63,6 +71,7 @@ subprojects {
         archiveFileName = "core-${project.name}-${versionWithGit}.jar"
 
         relocate "redis.clients.jedis", "studio.lunarlabs.relocations.jedis"
+        relocate "me.andyreckt.raspberry", "studio.lunarlabs.relocations.raspberry"
 
     }
 

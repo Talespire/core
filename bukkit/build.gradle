@@ -15,5 +15,7 @@ dependencies {
     compileOnly("studio.lunarlabs.universe:universe-shared:0.0.1")
 
     compileOnly "io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT"
+    compileOnly "me.andyreckt.raspberry:shared:1.1.22"
+    compileOnly "me.andyreckt.raspberry:paper:1.1.22"
 
 }
