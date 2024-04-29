@@ -10,6 +10,7 @@ import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.menu.GrantMenu;
+import studio.talespire.core.profile.menu.GrantsTypeMenu;
 
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
@@ -29,5 +30,11 @@ public class GrantCommand {
 
         new GrantMenu(profile).openAsync(player);
     }
+    @Command(names = "grants", permission = "op", description = "List grants of player")
+    public void executeGrants(Player player, @Param(name = "Target") UUID playerId) {
 
+        Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(playerId, null);
+
+        new GrantsTypeMenu(profile).openAsync(player);
+    }
 }

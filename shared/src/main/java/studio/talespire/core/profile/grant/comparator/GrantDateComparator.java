@@ -1,6 +1,6 @@
 package studio.talespire.core.profile.grant.comparator;
 
-import org.jetbrains.annotations.NotNull;
+import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.rank.Rank;
 
 import java.util.Comparator;
@@ -9,10 +9,10 @@ import java.util.Comparator;
  * @author Moose1301
  * @date 4/29/2024
  */
-public class RankWeightComparator implements Comparator<Rank> {
+public class GrantDateComparator implements Comparator<Grant> {
 
     @Override
-    public int compare(Rank rank, Rank otherRank) {
-        return Integer.compare(otherRank.ordinal(), rank.ordinal());
+    public int compare(Grant rank, Grant otherRank) {
+        return Long.compare(otherRank.getGrantedAt(), rank.getGrantedAt());
     }
 }

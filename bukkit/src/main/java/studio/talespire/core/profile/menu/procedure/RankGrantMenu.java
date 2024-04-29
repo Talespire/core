@@ -1,7 +1,5 @@
-package studio.talespire.core.profile.menu.ranks;
+package studio.talespire.core.profile.menu.procedure;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

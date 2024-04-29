@@ -1,4 +1,4 @@
-package studio.talespire.core.profile.menu.ranks;
+package studio.talespire.core.profile.menu.procedure;
 
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.menus.api.Button;

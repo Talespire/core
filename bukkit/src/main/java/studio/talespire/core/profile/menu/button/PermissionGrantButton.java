@@ -11,8 +11,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import studio.lunarlabs.universe.menus.api.Button;
-import studio.lunarlabs.universe.util.Constants;
 import studio.lunarlabs.universe.util.time.TimeUtil;
+import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.ColorUtils;
@@ -26,18 +26,17 @@ import java.util.List;
  * @date 4/28/2024
  */
 @AllArgsConstructor
-public class RankGrantButton extends Button {
-    private GrantRank grant;
+public class PermissionGrantButton extends Button {
+    private GrantPermission grant;
     @Override
     public ItemStack getItem(Player player) {
-        ItemStack stack = ColorUtils.toLeatherArmor(grant.getRank().getColor(), Material.LEATHER_CHESTPLATE);
+        ItemStack stack = new ItemStack(Material.NAME_TAG);
         ItemMeta meta = stack.getItemMeta();
         if(grant.isActive()) {
             meta.addEnchant(Enchantment.DURABILITY, 0, true);
         }
         meta.displayName(Component.text()
-                .append(grant.getRank().getPrefix())
-                .append(Component.text("(" + grant.getId().toString() + ")", NamedTextColor.DARK_GRAY))
+                .append(Component.text(grant.getPermission(), NamedTextColor.WHITE))
                 .build()
         );
 

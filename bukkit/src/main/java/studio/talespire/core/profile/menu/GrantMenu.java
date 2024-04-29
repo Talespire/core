@@ -14,12 +14,10 @@ import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.menu.conversation.PermissionInputPrompt;
-import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
-import studio.talespire.core.profile.menu.ranks.RankGrantMenu;
-import studio.talespire.core.profile.menu.ranks.TimeGrantMenu;
+import studio.talespire.core.profile.menu.procedure.RankGrantMenu;
+import studio.talespire.core.profile.menu.procedure.TimeGrantMenu;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
  * @author Moose1301
