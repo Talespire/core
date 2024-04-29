@@ -12,8 +12,9 @@ repositories {
 dependencies {
     compileOnly("studio.lunarlabs.universe:universe-shared:0.0.1")
 
+    compileOnly("net.kyori:adventure-api:4.16.0")
 
-
+    compileOnly 'io.projectreactor:reactor-core:3.6.4'
     compileOnly "redis.clients:jedis:5.1.2"
     compileOnly "org.mongodb:mongodb-driver-reactivestreams:5.0.0"
 }

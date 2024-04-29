@@ -72,6 +72,11 @@ subprojects {
 
         relocate "redis.clients.jedis", "studio.lunarlabs.relocations.jedis"
         relocate "me.andyreckt.raspberry", "studio.lunarlabs.relocations.raspberry"
+        relocate "org.bson", "studio.lunarlabs.relocations.bson"
+        relocate "com.mongodb", "studio.lunarlabs.relocations.mongodb"
+        relocate "org.reactivestreams", "studio.lunarlabs.relocations.reactivestreams"
+        relocate "reactor", "studio.lunarlabs.relocations.projectreactor"
+
 
     }
 
