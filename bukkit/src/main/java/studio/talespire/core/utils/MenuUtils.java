@@ -5,6 +5,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.w3c.dom.Text;
 
 import java.awt.*;
@@ -30,7 +31,19 @@ public class MenuUtils {
     public static Component chatSeparator() {
         return separator(75);
     }
+    public static Component centerSeparator(int index, Component component) {
+        int textLength = LegacyComponentSerializer.legacySection().serialize(component).length();
+        double textHalfLength = textLength / 2D;
 
+        int halfLength = index / 2;
+        halfLength -= textHalfLength;
+
+        int diff = 0;
+        if ((int)textHalfLength == textHalfLength) {
+            diff = 1;
+        }
+        return separator(halfLength).append(component).append(separator(halfLength + diff));
+    }
     public static Component menuSeparator() {
         return separator(50);
     }

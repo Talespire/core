@@ -30,6 +30,7 @@ public class ServerButton extends Button {
         ItemMeta meta = stack.getItemMeta();
         meta.displayName(CoreBukkit.DEFAULT_COMPONENT.append(Component.text(server.getDisplayName())));
         List<Component> lore = new ArrayList<>();
+        lore.add(MenuUtils.centerSeparator(50, Component.text("General", NamedTextColor.GRAY)));
         lore.add(CoreBukkit.DEFAULT_COMPONENT
                 .append(Component.text("Server Id", NamedTextColor.WHITE)).append(Component.text(": ", NamedTextColor.GRAY))
                 .append(Component.text(server.getServerId(), NamedTextColor.WHITE))
@@ -43,7 +44,7 @@ public class ServerButton extends Button {
                 .append(Component.text(server.getRegion(), NamedTextColor.WHITE))
         );
         if (server.getPlatform() == SystemType.BUKKIT) {
-            lore.add(MenuUtils.separator(22).append(Component.text("Bukkit", NamedTextColor.GOLD).append(MenuUtils.separator(22))));
+            lore.add(MenuUtils.centerSeparator(50, Component.text("Bukkit", NamedTextColor.GOLD)));
 
             lore.add(CoreBukkit.DEFAULT_COMPONENT
                     .append(Component.text("IP", NamedTextColor.WHITE)).append(Component.text(": ", NamedTextColor.GRAY))
