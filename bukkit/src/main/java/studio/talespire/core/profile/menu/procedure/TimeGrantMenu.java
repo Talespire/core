@@ -15,12 +15,14 @@ import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.time.TimeUtil;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.button.GrantInfoButton;
+import studio.talespire.core.profile.menu.button.api.ExitButton;
+import studio.talespire.core.profile.menu.button.impl.GrantInfoButton;
 import studio.talespire.core.profile.menu.conversation.TimeInputPrompt;
 import studio.talespire.core.rank.Rank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -37,6 +39,7 @@ public class TimeGrantMenu extends Menu {
     public TimeGrantMenu(Profile profile, @Nonnull Rank rank) {
         this.profile = profile;
         this.rank = rank;
+        this.setBordered(true);
     }
 
     public TimeGrantMenu(Profile profile, @Nonnull String permission) {
@@ -46,7 +49,7 @@ public class TimeGrantMenu extends Menu {
 
     @Override
     public String getTitle(Player player) {
-        return "Please Select a Time";
+        return "Please Select a Time.";
     }
 
     @Override
@@ -57,17 +60,23 @@ public class TimeGrantMenu extends Menu {
         } else {
             button = new GrantInfoButton(profile.getUsername(), permission);
         }
-        return Map.of(
-                4, button,
-                10, new TimeButton(TimeUnit.HOURS.toMillis(1), time -> handleTime(player, time)),
-                11, new TimeButton(TimeUnit.HOURS.toMillis(12), time -> handleTime(player, time)),
-                12, new TimeButton(TimeUnit.DAYS.toMillis(1), time -> handleTime(player, time)),
-                13, new TimeButton(TimeUnit.DAYS.toMillis(7), time -> handleTime(player, time)),
-                14, new TimeButton(TimeUnit.DAYS.toMillis(30), time -> handleTime(player, time)),
-                15, new TimeButton(TimeUnit.DAYS.toMillis(356), time -> handleTime(player, time)),
-                16, new TimeButton(-1, time -> handleTime(player, time)),
-                22, new CustomTimeButton(time -> handleTime(player, time))
-        );
+
+        Map<Integer, Button> buttons = new HashMap<>();
+
+        buttons.put(getSlot(4, 1), button);
+
+        buttons.put(getSlot(1, 2), new TimeButton(TimeUnit.HOURS.toMillis(1), time -> handleTime(player, time)));
+        buttons.put(getSlot(2, 2), new TimeButton(TimeUnit.HOURS.toMillis(12), time -> handleTime(player, time)));
+        buttons.put(getSlot(3, 2), new TimeButton(TimeUnit.DAYS.toMillis(1), time -> handleTime(player, time)));
+        buttons.put(getSlot(4, 2), new TimeButton(TimeUnit.DAYS.toMillis(7), time -> handleTime(player, time)));
+        buttons.put(getSlot(5, 2), new TimeButton(TimeUnit.DAYS.toMillis(30), time -> handleTime(player, time)));
+        buttons.put(getSlot(6, 2), new TimeButton(TimeUnit.DAYS.toMillis(356), time -> handleTime(player, time)));
+        buttons.put(getSlot(7, 2), new TimeButton(-1, time -> handleTime(player, time)));
+
+        buttons.put(getSlot(3, 3), new CustomTimeButton(time -> handleTime(player, time)));
+        buttons.put(getSlot(5, 3), new ExitButton());
+
+        return buttons;
     }
 
     private void handleTime(Player player, long time) {
@@ -88,7 +97,7 @@ public class TimeGrantMenu extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            ItemStack stack = new ItemStack(Material.PAPER);
+            ItemStack stack = new ItemStack(Material.ANVIL);
             ItemMeta meta = stack.getItemMeta();
             meta.displayName(Component.text("Custom", NamedTextColor.WHITE));
             stack.setItemMeta(meta);

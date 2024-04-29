@@ -1,4 +1,4 @@
-package studio.talespire.core.profile.menu.button;
+package studio.talespire.core.profile.menu.button.api;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;

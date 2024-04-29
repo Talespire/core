@@ -1,4 +1,4 @@
-package studio.talespire.core.profile.menu.button;
+package studio.talespire.core.profile.menu.button.impl;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;

@@ -20,7 +20,7 @@ import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
-import studio.talespire.core.profile.menu.button.GrantInfoButton;
+import studio.talespire.core.profile.menu.button.impl.GrantInfoButton;
 import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
 import studio.talespire.core.profile.packet.ProfileGrantPacket;
 import studio.talespire.core.rank.Rank;
@@ -45,6 +45,7 @@ public class ReasonGrantMenu extends Menu {
         this.profile = profile;
         this.rank = rank;
         this.time = time;
+        this.setBordered(true);
     }
 
     public ReasonGrantMenu(Profile profile, @Nonnull String permission, long time) {

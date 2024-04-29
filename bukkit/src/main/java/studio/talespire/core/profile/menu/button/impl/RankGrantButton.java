@@ -1,4 +1,4 @@
-package studio.talespire.core.profile.menu.button;
+package studio.talespire.core.profile.menu.button.impl;
 
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -17,11 +17,11 @@ import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.menus.api.Button;
+import studio.lunarlabs.universe.util.Constants;
 import studio.lunarlabs.universe.util.general.Tasks;
 import studio.lunarlabs.universe.util.time.TimeUtil;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
-import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
 import studio.talespire.core.profile.packet.ProfileGrantPacket;
@@ -31,24 +31,26 @@ import studio.talespire.core.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Moose1301
  * @date 4/28/2024
  */
 @AllArgsConstructor
-public class PermissionGrantButton extends Button {
+public class RankGrantButton extends Button {
     private Profile profile;
-    private GrantPermission grant;
+    private GrantRank grant;
     @Override
     public ItemStack getItem(Player player) {
-        ItemStack stack = new ItemStack(Material.NAME_TAG);
+        ItemStack stack = ColorUtils.toLeatherArmor(grant.getRank().getColor(), Material.LEATHER_CHESTPLATE);
         ItemMeta meta = stack.getItemMeta();
         if(grant.isActive()) {
             meta.addEnchant(Enchantment.DURABILITY, 0, true);
         }
         meta.displayName(Component.text()
-                .append(Component.text(grant.getPermission(), NamedTextColor.WHITE))
+                .append(grant.getRank().getPrefix())
+                .append(Component.text("(" + grant.getId().toString() + ")", NamedTextColor.DARK_GRAY))
                 .build()
         );
 
@@ -89,11 +91,13 @@ public class PermissionGrantButton extends Button {
                     Component.text("Removed Reason: ", NamedTextColor.DARK_GRAY),
                     Component.text(grant.getRemovedReason(), NamedTextColor.WHITE)
             ).build());
-        } else {
+        }
+        if (grant.isActive()){
             lore.add(Component.text("Click to remove", NamedTextColor.WHITE));
         }
 
         meta.lore(lore);
+
         stack.setItemMeta(meta);
         stack.addItemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         return stack;
@@ -117,6 +121,7 @@ public class PermissionGrantButton extends Button {
                         Universe.get(RedisService.class).publish(new ProfileGrantPacket(profile.getUuid(), grant));
                         Universe.get(ProfileService.class).saveProfile(profile);
                     });
+
                 }))
                 .buildConversation(player);
         player.beginConversation(conversation);

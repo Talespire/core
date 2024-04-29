@@ -1,4 +1,4 @@
-package studio.talespire.core.profile.menu.button;
+package studio.talespire.core.profile.menu.button.impl;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
