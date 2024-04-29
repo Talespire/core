@@ -13,6 +13,6 @@ public class GrantRankWeightComparator implements Comparator<GrantRank> {
 
     @Override
     public int compare(GrantRank rank, GrantRank otherRank) {
-        return Integer.compare(otherRank.getRank().ordinal(), rank.getRank().ordinal());
+        return Integer.compare(rank.getRank().ordinal(), otherRank.getRank().ordinal());
     }
 }
