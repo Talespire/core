@@ -92,7 +92,7 @@ public class GrantMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_, 20f, 0.1f);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 20f, 0.1f);
             player.closeInventory();
             new RankGrantMenu(profile).openAsync(player);
         }
