@@ -30,7 +30,7 @@ public class RankGrantMenu extends Menu {
     }
     @Override
     public String getTitle(Player player) {
-        return "Which Rank?";
+        return "Which Rank Type?";
     }
 
     @Override
