@@ -1,5 +1,6 @@
 package studio.talespire.core;
 
+import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.annotation.BukkitPlugin;
 
@@ -18,7 +19,8 @@ import studio.lunarlabs.universe.annotation.BukkitPlugin;
         depend = "Universe"
 )
 public class CorePlugin extends JavaPlugin {
-
+    @Getter
+    private static CorePlugin instance;
     @Override
     public void onEnable() {
         new CoreBukkit(this);

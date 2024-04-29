@@ -4,11 +4,14 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.Getter;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.mongo.MongoService;
+import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.rank.RankService;
 import studio.talespire.core.server.ServerService;
 
+import java.lang.reflect.Type;
 import java.nio.file.Path;
+import java.util.UUID;
 
 /**
  * @date 4/18/2024
@@ -31,6 +34,8 @@ public abstract class Core {
         Universe.get().getRegistry().put(RankService.class, new RankService());
         Universe.get().getRegistry().put(ProfileService.class, new ProfileService());
     }
+    public abstract Type getProfileType();
+    public abstract Profile createProfile(UUID playerId, String username);
 
     public void disable() {
         Universe.get(ServerService.class).disable();

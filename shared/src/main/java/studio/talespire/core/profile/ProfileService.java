@@ -7,6 +7,7 @@ import org.bson.Document;
 import reactor.core.publisher.Mono;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
+import studio.talespire.core.profile.adapter.ProfileAdapter;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.adapter.GrantAdapter;
 
@@ -25,6 +26,7 @@ public class ProfileService {
     public ProfileService() {
         this.profileCollection = Core.getInstance().getDatabase().getCollection("profiles");
         Statics.registerTypeAdapter(Grant.class, new GrantAdapter());
+        Statics.registerTypeAdapter(Profile.class, new ProfileAdapter());
     }
 
     public Profile getProfile(UUID uuid) {
@@ -42,10 +44,10 @@ public class ProfileService {
         Document document = Mono.from(this.profileCollection.find(Filters.eq("_id", playerId.toString())).first()).block();
         Profile profile;
         if (document == null) {
-            profile = new Profile(playerId, username);
+            profile = Core.getInstance().createProfile(playerId, username);
             saveProfile(profile);
         } else {
-            profile = Statics.gson().fromJson(document.toJson(), Profile.class);
+            profile = Statics.gson().fromJson(document.toJson(), Core.getInstance().getProfileType());
         }
         profile.load();
         this.profiles.put(playerId, profile);

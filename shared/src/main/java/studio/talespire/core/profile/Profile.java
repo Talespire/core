@@ -20,20 +20,21 @@ import java.util.*;
  */
 @Getter
 @Setter
-public class Profile {
+public abstract class Profile {
     @SerializedName("_id")
-    private final UUID uuid;
-    private String username;
-    private final Set<String> ipAddresses;
-    private final Set<Punishment> punishments;
-    private final Set<Grant> grants;
+    protected final UUID uuid;
+    protected String username;
+    protected final Set<String> ipAddresses;
+    protected final Set<Punishment> punishments;
+    protected final Set<Grant> grants;
 
-    private long firstSeen;
-    private long lastSeen;
+    protected long firstSeen;
+    protected long lastSeen;
 
-    private transient Rank rank;
+    protected transient Rank rank;
 
-    private transient Map<String, Boolean> permissions;
+    protected transient Map<String, Boolean> permissions;
+
 
 
     public Profile(UUID uuid, String username) {
@@ -50,6 +51,7 @@ public class Profile {
         this.rank = calculateRank();
         refreshPermissions();
     }
+    public abstract void apply();
     public Component getFormattedName() {
         return Component.text(this.username, this.rank.getColor());
     }
@@ -57,7 +59,6 @@ public class Profile {
     public List<Grant> getGrantsByType(GrantType type) {
         return grants.stream().filter(grant -> grant.getType() == type).toList();
     }
-
 
     public Grant getGrantById(UUID id) {
         for (Grant grant : this.grants) {

@@ -27,9 +27,8 @@ public class ProfileGrantPacket implements RPacket {
             return;
         }
         profile.getGrants().add(grant);
-        if(grant.getType() == GrantType.RANK) {
-            profile.load();
-        }
+        profile.load();
+        profile.apply();
     }
 
     public Profile getProfile() {
