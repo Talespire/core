@@ -10,6 +10,7 @@ import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.model.Punishment;
 import studio.talespire.core.profile.model.PunishmentType;
+import studio.talespire.core.profile.setting.Setting;
 import studio.talespire.core.rank.Rank;
 
 import java.util.*;
@@ -30,6 +31,7 @@ public abstract class Profile {
 
     protected long firstSeen;
     protected long lastSeen;
+    protected Map<String, Setting<?>> settings;
 
     protected transient Rank rank;
 
@@ -45,11 +47,16 @@ public abstract class Profile {
         this.ipAddresses = new HashSet<>();
         this.punishments = new HashSet<>();
         this.grants = new HashSet<>();
-        load();
+        this.settings = new HashMap<>();
+        this.load();
     }
     public void load() {
+
+        if(this.settings == null) {
+            this.settings = new HashMap<>();
+        }
         this.rank = calculateRank();
-        refreshPermissions();
+        this.refreshPermissions();
     }
     public abstract void apply();
     public Component getFormattedName() {
