@@ -17,6 +17,7 @@ import java.util.Map;
  */
 public class PlayerRankGrantMenu extends Menu {
     private final Profile profile;
+
     public PlayerRankGrantMenu(Profile profile) {
         this.profile = profile;
         this.setBordered(true);
@@ -30,6 +31,7 @@ public class PlayerRankGrantMenu extends Menu {
     @Override
     public Map<Integer, Button> getButtons(Player player) {
         Map<Integer, Button> buttons = new HashMap<>();
+
         for (Rank rank : Rank.values()) {
             if(rank.isStaff() || rank == Rank.DEFAULT) {
                 continue;
