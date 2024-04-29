@@ -79,12 +79,13 @@ public class RankGrantButton extends Button {
                     Component.text(grant.getRemovedReason(), NamedTextColor.WHITE)
             ).build());
         } else {
-            lore.add(Component.text("Click to remove"));
+            lore.add(Component.text("Click to remove", NamedTextColor.WHITE));
         }
 
         meta.lore(lore);
-        stack.addItemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+
         stack.setItemMeta(meta);
+        stack.addItemFlags(ItemFlag.HIDE_DYE, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
         return stack;
     }
 

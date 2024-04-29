@@ -25,7 +25,7 @@ public class PermissionGrantsMenu extends PaginatedMenu {
 
     public PermissionGrantsMenu(Profile profile) {
         this.profile = profile;
-        this.grants = profile.getGrants().stream().map(grant -> (GrantPermission) grant)
+        this.grants = profile.getGrants().stream().filter(grant -> grant instanceof GrantPermission).map(grant -> (GrantPermission) grant)
                 .sorted(new GrantDateComparator()).toList();
     }
 
