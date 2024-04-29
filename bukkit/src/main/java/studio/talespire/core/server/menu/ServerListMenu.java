@@ -44,7 +44,6 @@ public class ServerListMenu extends PaginatedMenu {
             }
             if (filteredType == server.getPlatform()) {
                 buttons.put(buttons.size(), new ServerButton(server));
-                continue;
             }
         }
         return buttons;

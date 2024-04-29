@@ -22,7 +22,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class ServerButton extends Button {
-    private Server server;
+    private final Server server;
     @Override
     public ItemStack getItem(Player player) {
         ItemStack stack = new ItemStack(BukkitUtils.toMaterial(server.getPlatform()));
