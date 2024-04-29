@@ -6,6 +6,7 @@ import me.andyreckt.raspberry.exception.InvalidArgumentException;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.UniverseBukkit;
 import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;

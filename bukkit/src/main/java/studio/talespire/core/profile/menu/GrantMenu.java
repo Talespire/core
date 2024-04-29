@@ -1,5 +1,6 @@
 package studio.talespire.core.profile.menu;
 
+import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.conversations.Conversation;
@@ -17,22 +18,21 @@ import studio.talespire.core.profile.menu.conversation.PermissionInputPrompt;
 import studio.talespire.core.profile.menu.procedure.RankGrantMenu;
 import studio.talespire.core.profile.menu.procedure.TimeGrantMenu;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author Moose1301
  * @date 4/28/2024
  */
+
+@RequiredArgsConstructor
 public class GrantMenu extends Menu {
     private final Profile profile;
 
-    public GrantMenu(Profile profile) {
-        this.profile = profile;
-    }
-
     @Override
     public String getTitle(Player player) {
-        return ChatColor.GOLD + "Granting " + profile.getUsername();
+        return ("Granting " + profile.getUsername());
     }
 
     @Override
@@ -47,12 +47,15 @@ public class GrantMenu extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            return new ItemBuilder(Material.PAPER).setName(ChatColor.WHITE + "Permission Grant").toItemStack();
+            return new ItemBuilder(Material.PAPER)
+                    .setName(ChatColor.WHITE + "Permission Grant")
+                    .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
             player.closeInventory();
+
             Conversation conversation = new ConversationFactory(UniversePlugin.get())
                     .withModality(true)
                     .withPrefix(new NullConversationPrefix())
@@ -62,6 +65,7 @@ public class GrantMenu extends Menu {
                     .withFirstPrompt(new PermissionInputPrompt(s -> new TimeGrantMenu(profile, s).openAsync(player)))
                     .buildConversation(player);
             player.beginConversation(conversation);
+
         }
     }
 
