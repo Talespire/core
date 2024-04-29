@@ -12,6 +12,7 @@ import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniverseBukkit;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.util.Constants;
+import studio.lunarlabs.universe.util.time.TimeUtil;
 import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
@@ -43,8 +44,13 @@ public class GrantCommand {
     @Command(names = "consolerankgrant", permission = "op", description = "Grant a permission", async = true, hidden = true)
     public void executeConsoleGrant(CommandSender sender,
                                     @Param(name = "Target") UUID playerId, @Param(name = "Rank")Rank rank,
-                                    @Param(name = "Time") long time, @Param(name = "Reason", wildcard = true) String reason) {
+                                    @Param(name = "Time") String timeStr, @Param(name = "Reason", wildcard = true) String reason) {
         if(sender instanceof Player) {
+            return;
+        }
+        long time = TimeUtil.parseTime(timeStr);
+        if (time == 0) {
+            sender.sendMessage(ChatColor.RED + "Please input a valid duration");
             return;
         }
         Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(playerId, null);
@@ -62,11 +68,17 @@ public class GrantCommand {
         Universe.get(RedisService.class).publish(new ProfileGrantPacket(profile.getUuid(), grant));
         Universe.get(ProfileService.class).saveProfile(profile);
     }
-    @Command(names = "consolerankgrant", permission = "op", description = "Grant a rank", async = true, hidden = true)
+    @Command(names = "consolepermissiongrant", permission = "op", description = "Grant a rank", async = true, hidden = true)
     public void executeConsoleGrant(CommandSender sender,
                                     @Param(name = "Target") UUID playerId, @Param(name = "Permission")String permission,
-                                    @Param(name = "Time") long time, @Param(name = "Reason", wildcard = true) String reason) {
+                                    @Param(name = "Time") String timeStr, @Param(name = "Reason", wildcard = true) String reason) {
+
         if(sender instanceof Player) {
+            return;
+        }
+        long time = TimeUtil.parseTime(timeStr);
+        if (time == 0) {
+            sender.sendMessage(ChatColor.RED + "Please input a valid duration");
             return;
         }
         Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(playerId, null);

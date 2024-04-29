@@ -39,6 +39,9 @@ public class BukkitProfileUtils {
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
             displayName = playerId.toString();
         }
+        if(displayName == null) {
+            displayName = playerId.toString();
+        }
         return Component.text(displayName, NamedTextColor.WHITE);
     }
 }

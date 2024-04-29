@@ -4,6 +4,8 @@ import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.Getter;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.mongo.MongoService;
+import studio.lunarlabs.universe.util.Constants;
+import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.rank.RankService;
@@ -30,6 +32,7 @@ public abstract class Core {
         this.dataFolder = dataFolder;
         this.database = Universe.get(MongoService.class).getClient().getDatabase("core");
 
+        Universe.get(UUIDCache.class).update(Constants.getConsoleUuid(), "Console", true);
         Universe.get().getRegistry().put(ServerService.class, new ServerService());
         Universe.get().getRegistry().put(RankService.class, new RankService());
         Universe.get().getRegistry().put(ProfileService.class, new ProfileService());

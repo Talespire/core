@@ -10,6 +10,7 @@ import studio.talespire.core.placeholder.PlaceholderService;
 import studio.talespire.core.profile.BukkitProfile;
 import studio.talespire.core.profile.BukkitProfileService;
 import studio.talespire.core.profile.Profile;
+import studio.talespire.core.rank.BukkitRankService;
 import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
 
@@ -28,7 +29,9 @@ public class CoreBukkit extends Core {
 
         Universe.get().getRegistry().put(PlaceholderService.class, new PlaceholderService());
         Universe.get(ServerService.class).registerProvider(new BukkitServerProvider());
+        Universe.get().getRegistry().put(BukkitRankService.class, new BukkitRankService(plugin));
         Universe.get().getRegistry().put(BukkitProfileService.class, new BukkitProfileService(plugin));
+
 
     }
 
