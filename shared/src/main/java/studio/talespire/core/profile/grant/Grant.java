@@ -1,15 +1,14 @@
 package studio.talespire.core.profile.grant;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
 
 /**
- * @date 4/28/2024
  * @author Moose1301
+ * @date 4/28/2024
  */
 @Getter
 @Setter
@@ -37,7 +36,7 @@ public abstract class Grant {
         this.grantedBy = grantedBy;
         this.grantedAt = grantedAt;
 
-        if(duration != -1) {
+        if (duration != -1) {
             expiresAt = System.currentTimeMillis() + duration;
         }
     }
@@ -61,6 +60,13 @@ public abstract class Grant {
         return this.expiresAt - System.currentTimeMillis();
     }
 
+    public void remove(UUID removedBy, long removedAt, String reason) {
+        this.removedBy = removedBy;
+        this.removedAt = removedAt;
+        this.removedReason = reason;
+
+    }
+
     @Override
     public int hashCode() {
         return this.id.hashCode();
@@ -68,7 +74,7 @@ public abstract class Grant {
 
     @Override
     public boolean equals(Object obj) {
-        if(obj instanceof Grant grant) {
+        if (obj instanceof Grant grant) {
             return this.id.equals(grant.getId());
         }
         return false;

@@ -4,22 +4,28 @@ import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
+import org.bukkit.conversations.Conversation;
+import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.conversations.NullConversationPrefix;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.util.Constants;
 import studio.lunarlabs.universe.util.time.TimeUtil;
 import studio.talespire.core.profile.grant.types.GrantRank;
+import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.ColorUtils;
 import studio.talespire.core.utils.MenuUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * @author Moose1301
@@ -94,7 +100,16 @@ public class RankGrantButton extends Button {
         if(!grant.isActive()) {
             return;
         }
-        //Add remove code
+        player.closeInventory();
+        Conversation conversation = new ConversationFactory(UniversePlugin.get())
+                .withModality(true)
+                .withPrefix(new NullConversationPrefix())
+                .withLocalEcho(false)
+                .withEscapeSequence("cancel")
+                .withTimeout(60)
+                .withFirstPrompt(new ReasonInputPrompt(reason -> grant.remove(player.getUniqueId(), System.currentTimeMillis(), reason)))
+                .buildConversation(player);
+        player.beginConversation(conversation);
 
     }
 }

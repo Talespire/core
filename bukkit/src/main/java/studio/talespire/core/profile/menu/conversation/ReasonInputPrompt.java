@@ -31,6 +31,6 @@ public class ReasonInputPrompt extends ValidatingPrompt {
 
     @Override
     public @NotNull String getPromptText(@NotNull ConversationContext ctx) {
-        return ChatColor.GOLD + "Please input the reason you are granting this rank";
+        return ChatColor.GOLD + "Please input the reason";
     }
 }
