@@ -2,7 +2,9 @@ package studio.talespire.core.server;
 
 import org.bukkit.Bukkit;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.util.CommandUtil;
 import studio.talespire.core.placeholder.PlaceholderService;
+import studio.talespire.core.server.command.ServerCommand;
 import studio.talespire.core.server.model.Server;
 import studio.talespire.core.utils.BukkitUtils;
 
@@ -21,6 +23,7 @@ public class BukkitServerProvider implements ServerProvider {
         currentServer.getMetadata().put("bukkit:port", Bukkit.getServer().getPort());
 
         Universe.get(PlaceholderService.class).registerPlaceholder("server", new ServerPlaceholder());
+        CommandUtil.registerAll(new ServerCommand());
     }
     @Override
     public void provide(Map<String, Object> metadata) {

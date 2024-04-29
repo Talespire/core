@@ -1,6 +1,8 @@
 package studio.talespire.core.utils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import studio.lunarlabs.universe.systemtype.SystemType;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,5 +26,15 @@ public class BukkitUtils {
             }
         }
         return Bukkit.getIp();
+    }
+
+    public static Material toMaterial(SystemType type) {
+        if (type == SystemType.BUKKIT) {
+            return Material.BUCKET;
+        } else if (type == SystemType.PROXY) {
+            return Material.ARROW;
+        } else {
+            return Material.BARRIER;
+        }
     }
 }
