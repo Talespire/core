@@ -59,8 +59,7 @@ public class GrantMenu extends Menu {
         public ItemStack getItem(Player player) {
             return new ItemBuilder(Material.PAPER)
                     .setName(ChatColor.GREEN + "Grant a Permission.")
-                    .addLoreLine("")
-                    .addLoreLine(ChatColor.DARK_GRAY + "Click to grant a permission to this player.")
+                    .addLoreLine(ChatColor.GRAY + "Click to grant a permission to this player.")
                     .toItemStack();
         }
 
@@ -87,14 +86,13 @@ public class GrantMenu extends Menu {
         @Override
         public ItemStack getItem(Player player) {
             return new ItemBuilder(Material.GREEN_WOOL).setName(ChatColor.GREEN + ("Grant a Rank."))
-                    .addLoreLine("")
-                    .addLoreLine(ChatColor.DARK_GRAY + "Click to grant a rank to this player.")
+                    .addLoreLine(ChatColor.GRAY + "Click to grant a rank to this player.")
                     .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_, 20f, 0.1f);
             player.closeInventory();
             new RankGrantMenu(profile).openAsync(player);
         }
