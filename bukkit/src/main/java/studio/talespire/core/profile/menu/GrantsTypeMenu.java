@@ -10,8 +10,8 @@ import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.list.PermissionGrantsMenu;
-import studio.talespire.core.profile.menu.list.RankGrantsMenu;
+import studio.talespire.core.profile.menu.impl.PermissionGrantsMenu;
+import studio.talespire.core.profile.menu.impl.RankGrantsMenu;
 
 import java.util.Map;
 
