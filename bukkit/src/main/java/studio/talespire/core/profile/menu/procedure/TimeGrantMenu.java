@@ -15,7 +15,7 @@ import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.time.TimeUtil;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.button.GrantInfoButton;
+import studio.talespire.core.profile.menu.button.impl.GrantInfoButton;
 import studio.talespire.core.profile.menu.conversation.TimeInputPrompt;
 import studio.talespire.core.rank.Rank;
 

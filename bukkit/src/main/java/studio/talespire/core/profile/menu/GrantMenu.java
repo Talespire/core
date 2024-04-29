@@ -1,6 +1,5 @@
 package studio.talespire.core.profile.menu;
 
-import lombok.RequiredArgsConstructor;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -14,9 +13,8 @@ import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.ItemBuilder;
-import studio.lunarlabs.universe.util.XSound;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.button.PlayerHeadButton;
+import studio.talespire.core.profile.menu.button.api.PlayerHeadButton;
 import studio.talespire.core.profile.menu.conversation.PermissionInputPrompt;
 import studio.talespire.core.profile.menu.procedure.RankGrantMenu;
 import studio.talespire.core.profile.menu.procedure.TimeGrantMenu;
@@ -92,7 +90,7 @@ public class GrantMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_, 20f, 0.1f);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
             player.closeInventory();
             new RankGrantMenu(profile).openAsync(player);
         }

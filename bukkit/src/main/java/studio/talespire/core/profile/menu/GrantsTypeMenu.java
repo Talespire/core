@@ -10,7 +10,6 @@ import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.button.PermissionGrantButton;
 import studio.talespire.core.profile.menu.list.PermissionGrantsMenu;
 import studio.talespire.core.profile.menu.list.RankGrantsMenu;
 

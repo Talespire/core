@@ -20,7 +20,7 @@ import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
-import studio.talespire.core.profile.menu.button.GrantInfoButton;
+import studio.talespire.core.profile.menu.button.impl.GrantInfoButton;
 import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
 import studio.talespire.core.profile.packet.ProfileGrantPacket;
 import studio.talespire.core.rank.Rank;

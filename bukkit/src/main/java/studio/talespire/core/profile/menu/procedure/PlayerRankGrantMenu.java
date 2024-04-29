@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.menu.button.SelectRankButton;
+import studio.talespire.core.profile.menu.button.impl.SelectRankButton;
 import studio.talespire.core.rank.Rank;
 
 import java.util.HashMap;

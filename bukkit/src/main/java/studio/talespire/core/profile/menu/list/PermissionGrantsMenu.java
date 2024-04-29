@@ -5,11 +5,8 @@ import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.pagination.PaginatedMenu;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.grant.comparator.GrantDateComparator;
-import studio.talespire.core.profile.grant.comparator.GrantRankWeightComparator;
 import studio.talespire.core.profile.grant.types.GrantPermission;
-import studio.talespire.core.profile.grant.types.GrantRank;
-import studio.talespire.core.profile.menu.button.PermissionGrantButton;
-import studio.talespire.core.profile.menu.button.RankGrantButton;
+import studio.talespire.core.profile.menu.button.impl.PermissionGrantButton;
 
 import java.util.HashMap;
 import java.util.List;

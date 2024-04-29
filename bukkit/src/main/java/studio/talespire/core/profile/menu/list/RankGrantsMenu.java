@@ -4,16 +4,14 @@ import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.pagination.PaginatedMenu;
 import studio.talespire.core.profile.Profile;
-import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.comparator.GrantDateComparator;
 import studio.talespire.core.profile.grant.comparator.GrantRankWeightComparator;
 import studio.talespire.core.profile.grant.types.GrantRank;
-import studio.talespire.core.profile.menu.button.RankGrantButton;
+import studio.talespire.core.profile.menu.button.impl.RankGrantButton;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
 
 /**
  * @author Moose1301
