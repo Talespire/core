@@ -33,7 +33,7 @@ public class PermissionGrantsMenu extends PaginatedMenu {
     public Map<Integer, Button> getAllPagesButtons(Player player) {
         Map<Integer, Button> buttons = new HashMap<>();
         for (GrantPermission grant : grants) {
-            buttons.put(buttons.size(), new PermissionGrantButton(grant));
+            buttons.put(buttons.size(), new PermissionGrantButton(profile, grant));
         }
         return buttons;
     }

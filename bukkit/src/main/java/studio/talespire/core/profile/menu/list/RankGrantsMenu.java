@@ -33,7 +33,7 @@ public class RankGrantsMenu extends PaginatedMenu {
     public Map<Integer, Button> getAllPagesButtons(Player player) {
         Map<Integer, Button> buttons = new HashMap<>();
         for (GrantRank grant : grants) {
-            buttons.put(buttons.size(), new RankGrantButton(grant));
+            buttons.put(buttons.size(), new RankGrantButton(profile, grant));
         }
         return buttons;
     }

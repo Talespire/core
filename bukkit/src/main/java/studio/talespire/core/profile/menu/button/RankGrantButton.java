@@ -13,12 +13,18 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniversePlugin;
+import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.util.Constants;
+import studio.lunarlabs.universe.util.general.Tasks;
 import studio.lunarlabs.universe.util.time.TimeUtil;
+import studio.talespire.core.profile.Profile;
+import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
+import studio.talespire.core.profile.packet.ProfileGrantPacket;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.ColorUtils;
 import studio.talespire.core.utils.MenuUtils;
@@ -33,6 +39,7 @@ import java.util.function.Consumer;
  */
 @AllArgsConstructor
 public class RankGrantButton extends Button {
+    private Profile profile;
     private GrantRank grant;
     @Override
     public ItemStack getItem(Player player) {
@@ -84,7 +91,8 @@ public class RankGrantButton extends Button {
                     Component.text("Removed Reason: ", NamedTextColor.DARK_GRAY),
                     Component.text(grant.getRemovedReason(), NamedTextColor.WHITE)
             ).build());
-        } else {
+        }
+        if (grant.isActive()){
             lore.add(Component.text("Click to remove", NamedTextColor.WHITE));
         }
 
@@ -107,7 +115,14 @@ public class RankGrantButton extends Button {
                 .withLocalEcho(false)
                 .withEscapeSequence("cancel")
                 .withTimeout(60)
-                .withFirstPrompt(new ReasonInputPrompt(reason -> grant.remove(player.getUniqueId(), System.currentTimeMillis(), reason)))
+                .withFirstPrompt(new ReasonInputPrompt(reason -> {
+                    Tasks.runAsync(() -> {
+                        grant.remove(player.getUniqueId(), System.currentTimeMillis(), reason);
+                        Universe.get(RedisService.class).publish(new ProfileGrantPacket(profile.getUuid(), grant));
+                        Universe.get(ProfileService.class).saveProfile(profile);
+                    });
+
+                }))
                 .buildConversation(player);
         player.beginConversation(conversation);
 

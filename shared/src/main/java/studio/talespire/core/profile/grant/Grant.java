@@ -43,7 +43,6 @@ public abstract class Grant {
 
 
     public boolean isActive() {
-
         return this.removedAt == null && (this.expiresAt == null || System.currentTimeMillis() < this.expiresAt);
     }
 
@@ -61,6 +60,7 @@ public abstract class Grant {
     }
 
     public void remove(UUID removedBy, long removedAt, String reason) {
+        this.removed = true;
         this.removedBy = removedBy;
         this.removedAt = removedAt;
         this.removedReason = reason;
