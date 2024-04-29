@@ -1,0 +1,45 @@
+package studio.talespire.core.utils;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.w3c.dom.Text;
+
+import java.awt.*;
+
+/**
+ * @author Moose1301
+ * @date 4/29/2024
+ */
+public class MenuUtils {
+    public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
+
+
+    public static String repeat(String string, int times) {
+        return new String(new char[times]).replace("\0", string);
+    }
+
+    public static Component separator(int times) {
+        return DEFAULT_COMPONENT.append(
+                Component.text(repeat(" ", times), style(NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH))
+        );
+    }
+
+    public static Component chatSeparator() {
+        return separator(75);
+    }
+
+    public static Component menuSeparator() {
+        return separator(50);
+    }
+
+    public static Component scoreboardSeparator() {
+        return separator(32);
+    }
+    public static Style style(TextColor color, TextDecoration... decorations) {
+        return Style.style(color, decorations).decoration(TextDecoration.ITALIC, false);
+    }
+
+}

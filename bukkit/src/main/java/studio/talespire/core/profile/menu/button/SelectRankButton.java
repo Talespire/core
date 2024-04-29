@@ -1,7 +1,5 @@
 package studio.talespire.core.profile.menu.button;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,10 +16,10 @@ import java.util.function.Consumer;
  * @author Moose1301
  * @date 4/28/2024
  */
-public class RankButton extends Button {
+public class SelectRankButton extends Button {
     private final Rank rank;
     private final Consumer<Rank> callback;
-    public RankButton(Rank rank, @Nonnull Consumer<Rank> callback) {
+    public SelectRankButton(Rank rank, @Nonnull Consumer<Rank> callback) {
         this.rank = rank;
         this.callback = callback;
     }

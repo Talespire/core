@@ -13,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.data.redis.RedisService;
-import studio.lunarlabs.universe.data.redis.packet.listener.RPacketHandler;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.talespire.core.profile.Profile;
@@ -30,7 +29,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -86,13 +84,14 @@ public class ReasonGrantMenu extends Menu {
         player.closeInventory();
         player.sendMessage(
                 Component.text()
-                                .append(Component.text("You granted", NamedTextColor.GOLD))
+                        .append(Component.text("You granted", NamedTextColor.GOLD))
+                        .append(Component.space())
                         .append(profile.getFormattedName())
                         .append(Component.space())
                         .append(rank != null ? rank.getPrefix() : Component.text(permission))
         );
         Grant grant;
-        if(rank != null) {
+        if (rank != null) {
             grant = new GrantRank(UUID.randomUUID(), rank, reason, time, player.getUniqueId(), System.currentTimeMillis());
         } else {
             grant = new GrantPermission(UUID.randomUUID(), permission, reason, time, player.getUniqueId(), System.currentTimeMillis());

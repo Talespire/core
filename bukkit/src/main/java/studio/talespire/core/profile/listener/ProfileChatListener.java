@@ -34,15 +34,5 @@ public class ProfileChatListener implements Listener {
         );
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        Profile profile = Universe.get(ProfileService.class).getProfile(event.getPlayer().getUniqueId());
 
-        event.getPlayer().playerListName(Component.text()
-                .append(profile.getRank().getTabPrefix())
-                .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
-                .append(event.getPlayer().displayName())
-                .build()
-        );
-    }
 }
