@@ -37,6 +37,7 @@ public class TimeGrantMenu extends Menu {
     public TimeGrantMenu(Profile profile, @Nonnull Rank rank) {
         this.profile = profile;
         this.rank = rank;
+        this.setBordered(true);
     }
 
     public TimeGrantMenu(Profile profile, @Nonnull String permission) {

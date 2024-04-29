@@ -45,6 +45,7 @@ public class ReasonGrantMenu extends Menu {
         this.profile = profile;
         this.rank = rank;
         this.time = time;
+        this.setBordered(true);
     }
 
     public ReasonGrantMenu(Profile profile, @Nonnull String permission, long time) {
