@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.pagination.PaginatedMenu;
 import studio.talespire.core.profile.Profile;
+import studio.talespire.core.profile.grant.comparator.GrantActiveComparator;
 import studio.talespire.core.profile.grant.comparator.GrantDateComparator;
 import studio.talespire.core.profile.grant.comparator.GrantRankWeightComparator;
 import studio.talespire.core.profile.grant.types.GrantRank;
@@ -24,7 +25,7 @@ public class RankGrantsMenu extends PaginatedMenu {
     public RankGrantsMenu(Profile profile) {
         this.profile = profile;
         this.grants = profile.getGrants().stream().filter(grant -> grant instanceof GrantRank).map(grant -> (GrantRank) grant)
-                .sorted(new GrantRankWeightComparator().thenComparing(new GrantDateComparator())).toList();
+                .sorted(new GrantRankWeightComparator().thenComparing(new GrantDateComparator()).thenComparing(new GrantActiveComparator())).toList();
     }
 
     @Override

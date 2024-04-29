@@ -4,6 +4,7 @@ import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.pagination.PaginatedMenu;
 import studio.talespire.core.profile.Profile;
+import studio.talespire.core.profile.grant.comparator.GrantActiveComparator;
 import studio.talespire.core.profile.grant.comparator.GrantDateComparator;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.menu.button.impl.PermissionGrantButton;
@@ -23,7 +24,7 @@ public class PermissionGrantsMenu extends PaginatedMenu {
     public PermissionGrantsMenu(Profile profile) {
         this.profile = profile;
         this.grants = profile.getGrants().stream().filter(grant -> grant instanceof GrantPermission).map(grant -> (GrantPermission) grant)
-                .sorted(new GrantDateComparator()).toList();
+                .sorted(new GrantDateComparator().thenComparing(new GrantActiveComparator())).toList();
     }
 
     @Override
