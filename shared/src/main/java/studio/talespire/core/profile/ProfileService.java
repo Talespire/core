@@ -7,7 +7,6 @@ import org.bson.Document;
 import reactor.core.publisher.Mono;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
-import studio.talespire.core.profile.adapter.ProfileAdapter;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.adapter.GrantAdapter;
 
@@ -26,7 +25,6 @@ public class ProfileService {
     public ProfileService() {
         this.profileCollection = Core.getInstance().getDatabase().getCollection("profiles");
         Statics.registerTypeAdapter(Grant.class, new GrantAdapter());
-        Statics.registerTypeAdapter(Profile.class, new ProfileAdapter());
     }
 
     public Profile getProfile(UUID uuid) {

@@ -23,6 +23,7 @@ public class CorePlugin extends JavaPlugin {
     private static CorePlugin instance;
     @Override
     public void onEnable() {
+        instance = this;
         new CoreBukkit(this);
     }
 
