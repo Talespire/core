@@ -8,6 +8,7 @@ import studio.talespire.core.profile.grant.comparator.GrantActiveComparator;
 import studio.talespire.core.profile.grant.comparator.GrantDateComparator;
 import studio.talespire.core.profile.grant.comparator.GrantRankWeightComparator;
 import studio.talespire.core.profile.grant.types.GrantRank;
+import studio.talespire.core.profile.menu.button.api.ExitButton;
 import studio.talespire.core.profile.menu.button.impl.RankGrantButton;
 
 import java.util.HashMap;
@@ -34,6 +35,8 @@ public class RankGrantsMenu extends PaginatedMenu {
         for (GrantRank grant : grants) {
             buttons.put(buttons.size(), new RankGrantButton(profile, grant));
         }
+
+        buttons.put(getSlot(4, 3), new ExitButton());
         return buttons;
     }
 

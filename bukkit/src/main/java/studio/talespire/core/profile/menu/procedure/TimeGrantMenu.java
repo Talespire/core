@@ -45,6 +45,7 @@ public class TimeGrantMenu extends Menu {
     public TimeGrantMenu(Profile profile, @Nonnull String permission) {
         this.profile = profile;
         this.permission = permission;
+        this.setBordered(true);
     }
 
     @Override

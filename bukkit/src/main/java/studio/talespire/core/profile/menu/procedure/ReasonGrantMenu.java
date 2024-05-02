@@ -20,6 +20,7 @@ import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
+import studio.talespire.core.profile.menu.button.api.ExitButton;
 import studio.talespire.core.profile.menu.button.impl.GrantInfoButton;
 import studio.talespire.core.profile.menu.conversation.ReasonInputPrompt;
 import studio.talespire.core.profile.packet.ProfileGrantPacket;
@@ -27,6 +28,7 @@ import studio.talespire.core.rank.Rank;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
@@ -67,18 +69,24 @@ public class ReasonGrantMenu extends Menu {
         } else {
             button = new GrantInfoButton(profile.getUsername(), permission, time);
         }
-        return Map.of(
-                4, button,
-                10, new ReasonButton("Giveaway", reason -> handleReason(player, reason)),
-                11, new ReasonButton("Gifted", reason -> handleReason(player, reason)),
-                12, new ReasonButton("Accepted", reason -> handleReason(player, reason)),
 
-                14, new ReasonButton("Purchase", reason -> handleReason(player, reason)),
-                15, new ReasonButton("Demoted", reason -> handleReason(player, reason)),
-                16, new ReasonButton("Promoted", time -> handleReason(player, time)),
+        Map<Integer, Button> buttons = new HashMap<>();
 
-                22, new CustomReasonButton(reason -> handleReason(player, reason))
-        );
+        buttons.put(getSlot(4, 1), button);
+
+        buttons.put(getSlot(1, 2), new ReasonButton("Giveaway", reason -> handleReason(player, reason)));
+        buttons.put(getSlot(2, 2), new ReasonButton("Gifted", reason -> handleReason(player, reason)));
+        buttons.put(getSlot(3, 2), new ReasonButton("Accepted", reason -> handleReason(player, reason)));
+
+        buttons.put(getSlot(4, 2), new CustomReasonButton(reason -> handleReason(player, reason)));
+
+        buttons.put(getSlot(5, 2), new ReasonButton("Purchase", reason -> handleReason(player, reason)));
+        buttons.put(getSlot(6, 2), new ReasonButton("Demoted", reason -> handleReason(player, reason)));
+        buttons.put(getSlot(7, 2), new ReasonButton("Promoted", reason -> handleReason(player, reason)));
+
+        buttons.put(getSlot(4, 3), new ExitButton());
+
+        return buttons;
     }
 
     private void handleReason(Player player, String reason) {
@@ -112,7 +120,7 @@ public class ReasonGrantMenu extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            ItemStack stack = new ItemStack(Material.PAINTING);
+            ItemStack stack = new ItemStack(Material.ANVIL);
             ItemMeta meta = stack.getItemMeta();
             meta.displayName(Component.text("Custom", NamedTextColor.WHITE));
             stack.setItemMeta(meta);
