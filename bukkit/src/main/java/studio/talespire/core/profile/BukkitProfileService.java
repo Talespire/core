@@ -4,11 +4,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
-import studio.lunarlabs.universe.data.redis.packet.listener.RPacketHandler;
 import studio.lunarlabs.universe.util.CommandUtil;
-import studio.talespire.core.CoreBukkit;
-import studio.talespire.core.CorePlugin;
 import studio.talespire.core.profile.command.GrantCommand;
+import studio.talespire.core.profile.command.SettingsCommand;
 import studio.talespire.core.profile.listener.ProfileChatListener;
 import studio.talespire.core.profile.listener.ProfileLoadListener;
 import studio.talespire.core.profile.listener.ProfilePacketListener;
@@ -23,6 +21,6 @@ public class BukkitProfileService {
         Bukkit.getServer().getPluginManager().registerEvents(new ProfileChatListener(), plugin);
         Bukkit.getServer().getPluginManager().registerEvents(new ProfileLoadListener(), plugin);
         Universe.get(RedisService.class).registerListener(new ProfilePacketListener());
-        CommandUtil.registerAll(new GrantCommand());
+        CommandUtil.registerAll(new GrantCommand(), new SettingsCommand());
     }
 }

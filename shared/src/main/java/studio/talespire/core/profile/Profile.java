@@ -1,19 +1,25 @@
 package studio.talespire.core.profile;
 
+import com.google.gson.annotations.JsonAdapter;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.GrantType;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.model.Punishment;
 import studio.talespire.core.profile.model.PunishmentType;
-import studio.talespire.core.profile.setting.Setting;
 import studio.talespire.core.rank.Rank;
+import studio.talespire.core.setting.Setting;
+import studio.talespire.core.setting.SettingOption;
+import studio.talespire.core.setting.SettingService;
+import studio.talespire.core.setting.adapter.SettingMapAdapter;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @date 4/25/2024
@@ -31,7 +37,10 @@ public abstract class Profile {
 
     protected long firstSeen;
     protected long lastSeen;
-    protected Map<String, Setting<?>> settings;
+
+
+    @JsonAdapter(SettingMapAdapter.class)
+    protected ConcurrentHashMap<Setting<?>, SettingOption<?>> settings;
 
     protected transient Rank rank;
 
@@ -47,18 +56,23 @@ public abstract class Profile {
         this.ipAddresses = new HashSet<>();
         this.punishments = new HashSet<>();
         this.grants = new HashSet<>();
-        this.settings = new HashMap<>();
+        this.settings = new ConcurrentHashMap<>();
+        for (Setting<?> setting : Universe.get(SettingService.class).getSettings()) {
+            this.settings.put(setting, setting.getDefaultValue());
+        }
         this.load();
     }
     public void load() {
-
+        //OLD Profiles (Pre Commit c9af9fe won't have settings)
         if(this.settings == null) {
-            this.settings = new HashMap<>();
+            this.settings = new ConcurrentHashMap<>();
         }
         this.rank = calculateRank();
         this.refreshPermissions();
     }
     public abstract void apply();
+
+
     public Component getFormattedName() {
         return Component.text(this.username, this.rank.getColor());
     }
@@ -160,4 +174,23 @@ public abstract class Profile {
         }
         this.permissions = permissions;
     }
+
+
+    @SuppressWarnings("unchecked")
+    public <T> SettingOption<T> getSetting(Setting<T> setting) {
+        if (!settings.containsKey(setting)) {
+            settings.put(setting, setting.getDefaultValue());
+        }
+        return (SettingOption<T>) settings.get(setting);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> SettingOption<T> getSetting(Class<? extends Setting<T>> setting) {
+        Setting<?> settingObject = Universe.get(SettingService.class).getSetting(setting.getSimpleName());
+        if (!settings.containsKey(settingObject)) {
+            settings.put(settingObject, settingObject.getDefaultValue());
+        }
+        return (SettingOption<T>) settings.get(settingObject);
+    }
+
 }

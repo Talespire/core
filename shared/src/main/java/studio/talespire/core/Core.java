@@ -10,6 +10,7 @@ import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.rank.RankService;
 import studio.talespire.core.server.ServerService;
+import studio.talespire.core.setting.SettingService;
 
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -35,6 +36,7 @@ public abstract class Core {
         Universe.get(UUIDCache.class).update(Constants.getConsoleUuid(), "Console", true);
         Universe.get().getRegistry().put(ServerService.class, new ServerService());
         Universe.get().getRegistry().put(RankService.class, new RankService());
+        Universe.get().getRegistry().put(SettingService.class, new SettingService());
         Universe.get().getRegistry().put(ProfileService.class, new ProfileService());
     }
     public abstract Type getProfileType();

@@ -1,8 +1,8 @@
-package studio.talespire.core.profile.setting;
+package studio.talespire.core.setting;
 
-import studio.talespire.core.profile.Profile;
+import com.google.gson.JsonElement;
+import net.kyori.adventure.text.Component;
 
-import javax.swing.*;
 import java.util.List;
 
 /**
@@ -18,12 +18,13 @@ public abstract class Setting<T> {
     /**
      * @return The name that is shown to the player
      */
-    public abstract String getName();
+    public abstract Component getName();
+    public abstract Component getDescription();
 
     /**
      * @return The default value that set for the player
      */
-    public abstract T getDefaultValue();
+    public abstract SettingOption<T> getDefaultValue();
 
     /**
      * @return All the options for thie setting
@@ -34,19 +35,17 @@ public abstract class Setting<T> {
      * @param value The option
      * @return The display name of the option
      */
-    public abstract String getDisplayName(T value);
+    public abstract Component getDisplayName(SettingOption<T> value);
 
     /**
-     * @param profile The player which is switching the setting
      * @param currentValue The current option that the player has selected
      * @return The next option for the player
      */
-    public abstract T getNext(Profile profile, T currentValue);
+    public abstract SettingOption<T> getNext(SettingOption<T> currentValue);
+    public SettingOption<T> getRawNext(SettingOption<?> currentValue) {
+        return getNext((SettingOption<T>) currentValue);
+    }
 
-    /**
-     * @param profile The player
-     * @param value The option
-     * @return If the player can switch to that option
-     */
-    public abstract boolean hasPermission(Profile profile, T value);
+
+    public abstract SettingOption<T> deserialize(JsonElement value);
 }
