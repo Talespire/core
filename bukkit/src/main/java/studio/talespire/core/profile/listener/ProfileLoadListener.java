@@ -32,6 +32,8 @@ public class ProfileLoadListener implements Listener {
         Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(event.getUniqueId(), event.getName());
         String address = SaltingUtils.salt(event.getAddress().getHostAddress());
         profile.getIpAddresses().add(address);
+        profile.setUsername(event.getName());
+
         Punishment punishment = profile.getActivePunishmentByType(PunishmentType.BLACKLIST);
         if (punishment == null) {
             punishment = profile.getActivePunishmentByType(PunishmentType.BAN);
