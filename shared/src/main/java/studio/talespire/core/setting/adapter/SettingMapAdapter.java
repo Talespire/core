@@ -2,6 +2,8 @@ package studio.talespire.core.setting.adapter;
 
 import com.google.gson.*;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.util.logging.Debugger;
+import studio.talespire.core.Core;
 import studio.talespire.core.setting.Setting;
 import studio.talespire.core.setting.SettingService;
 import studio.talespire.core.setting.SettingOption;
@@ -22,7 +24,7 @@ public class SettingMapAdapter implements JsonSerializer<ConcurrentHashMap<Setti
         for (Map.Entry<Setting<?>, SettingOption<?>> entry : map.entrySet()) {
             Setting<?> key = entry.getKey();
             SettingOption<?> value = entry.getValue();
-            json.add(key.getClass().getSimpleName(), context.serialize(value.value()));
+            json.add(key.getId(), context.serialize(value.value()));
         }
         return json;
     }
@@ -36,8 +38,10 @@ public class SettingMapAdapter implements JsonSerializer<ConcurrentHashMap<Setti
                 JsonElement value = entry.getValue();
                 Setting<?> setting = Universe.get(SettingService.class).getSetting(key);
                 if (setting == null) {
+                    System.out.println("Faileed to get setting " + key);
                     continue;
                 }
+
                 SettingOption<?> settingValue = setting.deserialize(value);
                 map.put(setting, settingValue);
             } catch (Exception e) {

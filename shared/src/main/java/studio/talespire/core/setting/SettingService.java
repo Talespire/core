@@ -23,6 +23,7 @@ public class SettingService {
 
     private void registerSetting(Setting<?> setting) {
         this.registeredSettings.put(setting.getId(), setting);
+        System.out.println("Registered sertting " + setting.getId());
     }
     public Setting<?> getSetting(String id) {
         return this.registeredSettings.get(id);
