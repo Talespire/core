@@ -27,6 +27,7 @@ public abstract class Core {
 
     private final Path dataFolder;
     private final MongoDatabase database;
+    
 
     public Core(Path dataFolder) {
         instance = this;
@@ -38,6 +39,7 @@ public abstract class Core {
         Universe.get().getRegistry().put(RankService.class, new RankService());
         Universe.get().getRegistry().put(SettingService.class, new SettingService());
         Universe.get().getRegistry().put(ProfileService.class, new ProfileService());
+
     }
     public abstract Type getProfileType();
     public abstract Profile createProfile(UUID playerId, String username);

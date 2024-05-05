@@ -77,7 +77,12 @@ subprojects {
         relocate "org.reactivestreams", "studio.lunarlabs.relocations.reactivestreams"
         relocate "reactor", "studio.lunarlabs.relocations.projectreactor"
 
-
+        relocate "com.google.gson", "studio.lunarlabs.relocations.google.gson"
+        relocate "com.google.auto", "studio.lunarlabs.relocations.google.auto"
+        relocate "com.google.common", "studio.lunarlabs.relocations.google.common"
+        relocate "com.google.errorprone", "studio.lunarlabs.relocations.google.errorprone"
+        relocate "com.google.thirdparty.publicsuffix", "studio.lunarlabs.relocations.google.thirdparty.publicsuffix"
+        relocate "com.google.j2objc", "studio.lunarlabs.relocations.google.j2objc"
     }
 
 
