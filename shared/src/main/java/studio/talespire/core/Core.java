@@ -28,6 +28,7 @@ public abstract class Core {
 
     private final Path dataFolder;
     private final MongoDatabase database;
+    
 
     public Core(Path dataFolder) {
         instance = this;
