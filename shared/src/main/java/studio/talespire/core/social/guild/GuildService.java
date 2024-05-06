@@ -4,6 +4,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import org.bson.Document;
+import org.jetbrains.annotations.ApiStatus;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import studio.lunarlabs.universe.util.Statics;
@@ -42,6 +43,7 @@ public class GuildService {
     public void forgetGuild(UUID guildId) {
         this.guilds.remove(guildId);
     }
+
     public void deleteGuild(Guild guild) {
         this.guilds.remove(guild.getUuid());
         Mono.from(this.guildCollection.deleteOne(
@@ -56,5 +58,16 @@ public class GuildService {
                 Document.parse(Statics.plainGson().toJson(guild)),
                 new ReplaceOptions().upsert(true)
         )).subscribe();
+    }
+
+    @ApiStatus.Internal
+    public void fetchGuild(UUID guildId) {
+        Document document = Mono.from(this.guildCollection.find(Filters.eq("_id", guildId.toString())).first()).block();
+        if(document == null) {
+            return;
+        }
+        Guild guild = Statics.gson().fromJson(document.toJson(), Guild.class);
+
+        this.guilds.put(guild.getUuid(), guild);
     }
 }

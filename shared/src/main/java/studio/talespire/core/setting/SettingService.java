@@ -1,12 +1,12 @@
 package studio.talespire.core.setting;
 
-import studio.talespire.core.setting.types.messages.PrivateMessageSetting;
+import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
+import studio.talespire.core.setting.types.privacy.PrivateMessageSetting;
 import studio.talespire.core.setting.types.sounds.MessageSoundSetting;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Moose1301
@@ -19,11 +19,11 @@ public class SettingService {
     public SettingService() {
         registerSetting(new PrivateMessageSetting());
         registerSetting(new MessageSoundSetting());
+        registerSetting(new GuildInviteSetting());
     }
 
     private void registerSetting(Setting<?> setting) {
         this.registeredSettings.put(setting.getId(), setting);
-        System.out.println("Registered sertting " + setting.getId());
     }
     public Setting<?> getSetting(String id) {
         return this.registeredSettings.get(id);

@@ -63,10 +63,11 @@ public abstract class Profile {
         this.load();
     }
     public void load() {
-        //OLD Profiles (Pre Commit c9af9fe won't have settings)
-        if(this.settings == null) {
-            this.settings = new ConcurrentHashMap<>();
+        for (Setting<?> setting : Universe.get(SettingService.class).getSettings()) {
+            if (this.settings.containsKey(setting)) continue;
+            this.settings.put(setting, setting.getDefaultValue());
         }
+
         this.rank = calculateRank();
         this.refreshPermissions();
     }

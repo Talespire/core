@@ -1,4 +1,4 @@
-package studio.talespire.core.setting.types.messages;
+package studio.talespire.core.setting.types;
 
 
 import lombok.Getter;
@@ -12,22 +12,22 @@ import studio.talespire.core.util.StringUtils;
  * @date 4/29/2024
  */
 @Getter
-public enum PrivateMessageType {
+public enum PrivacyLevel {
     EVERYONE,
     FRIENDS,
     STAFF,
     NONE;
 
 
-    private final SettingOption<PrivateMessageType> value;
+    private final SettingOption<PrivacyLevel> value;
 
-    PrivateMessageType() {
+    PrivacyLevel() {
         Component displayName = Component.text(StringUtils.capitalize(this.name().toLowerCase()), NamedTextColor.WHITE);
         this.value = new SettingOption<>(displayName, this);
 
     }
 
-    public PrivateMessageType getNext() {
+    public PrivacyLevel getNext() {
         int index = ordinal();
         int next = index + 1;
         if (next > NONE.ordinal()) {

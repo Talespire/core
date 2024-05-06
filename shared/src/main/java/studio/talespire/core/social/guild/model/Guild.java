@@ -34,6 +34,7 @@ public class Guild {
         this.name = name;
         this.createdAt = System.currentTimeMillis();
         this.description = "";
+        this.members.put(leader, new GuildMember(leader, this.createdAt, GuildRole.LEADER));
     }
 
     public void setRole(UUID playerId, GuildRole role) {

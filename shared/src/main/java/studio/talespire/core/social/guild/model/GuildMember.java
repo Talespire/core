@@ -19,6 +19,5 @@ public class GuildMember {
         this.playerId = playerId;
         this.joinedAt = System.currentTimeMillis();
         this.role = GuildRole.MEMBER;
-
     }
 }
