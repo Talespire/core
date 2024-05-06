@@ -20,21 +20,26 @@ public class Guild {
     private final long createdAt;
     private final Map<UUID, GuildMember> members = new HashMap<>();
     private final Map<UUID, GuildInvite> invites = new HashMap<>();
+    private final Map<GuildPermission, GuildRole> permissions = new HashMap<>();
     private final List<String> motd = new ArrayList<>();
 
 
     private UUID leader;
     private String name;
     private String description;
+    private boolean mutechat;
 
 
-    public Guild(UUID uuid, UUID leader, String name) {
-        this.uuid = uuid;
+    public Guild(UUID leader, String name) {
+        this.uuid = UUID.randomUUID();
         this.leader = leader;
         this.name = name;
         this.createdAt = System.currentTimeMillis();
         this.description = "";
         this.members.put(leader, new GuildMember(leader, this.createdAt, GuildRole.LEADER));
+        for (GuildPermission value : GuildPermission.values()) {
+            this.permissions.put(value, value.getDefaultRole());
+        }
     }
 
     public void setRole(UUID playerId, GuildRole role) {
@@ -42,6 +47,18 @@ public class Guild {
             return;
         }
         this.members.get(playerId).setRole(role);
+    }
+
+    public GuildRole getRole(UUID playerId) {
+        if (!members.containsKey(playerId)) {
+            return GuildRole.MEMBER;
+        }
+        return this.members.get(playerId).getRole();
+    }
+
+    public boolean hasPermission(UUID playerId, GuildPermission permission) {
+        GuildRole requiredRole = this.permissions.getOrDefault(permission, permission.getDefaultRole());
+        return requiredRole.ordinal() >= getRole(playerId).ordinal();
     }
 
     public void transferLeader(UUID newLeader) {
@@ -60,5 +77,9 @@ public class Guild {
 
     public GuildInvite getInvite(UUID invite) {
         return this.invites.get(invite);
+    }
+
+    public void createInvite(UUID inviter, UUID targetInvite) {
+        this.invites.put(targetInvite, new GuildInvite(inviter, System.currentTimeMillis(), targetInvite));
     }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.packet.RPacket;
 import studio.talespire.core.social.guild.GuildService;
+import studio.talespire.core.social.guild.model.Guild;
 
 import java.util.UUID;
 
@@ -15,8 +16,7 @@ import java.util.UUID;
  */
 @AllArgsConstructor
 @Getter @NoArgsConstructor
-public class GuildChatPacket implements RPacket {
-    private UUID guildId;
+public class GuildChatPacket extends GuildPacket {
     private UUID senderId;
     private String message;
 

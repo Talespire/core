@@ -4,6 +4,7 @@ package studio.talespire.core.setting.types;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import studio.talespire.core.profile.Profile;
 import studio.talespire.core.setting.SettingOption;
 import studio.talespire.core.util.StringUtils;
 
@@ -34,5 +35,20 @@ public enum PrivacyLevel {
             next = 0;
         }
         return values()[next];
+    }
+
+    public boolean doesMatch(Profile fromProfile, Profile targetProfile) {
+        if(this == EVERYONE) {
+            return true;
+        } else if(this == NONE) {
+            return false;
+        }
+        if(this.ordinal() <= STAFF.ordinal()) {
+            return fromProfile.getRank().isStaff();
+        }
+
+        //TODO Friend System
+        return true;
+
     }
 }

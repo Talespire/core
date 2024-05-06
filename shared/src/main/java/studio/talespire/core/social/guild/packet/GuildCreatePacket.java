@@ -14,9 +14,11 @@ import java.util.UUID;
  * @date 5/5/2024
  */
 @AllArgsConstructor
-@Getter @NoArgsConstructor
-public class GuildCreatePacket implements RPacket {
-    private UUID guildId;
+@Getter
+public class GuildCreatePacket extends GuildPacket {
+    public GuildCreatePacket(UUID guildId) {
+        super(guildId);
+    }
     @Override
     public void receive() {
         Universe.get(GuildService.class).fetchGuild(guildId);

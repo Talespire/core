@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.GrantType;
@@ -17,6 +18,8 @@ import studio.talespire.core.setting.Setting;
 import studio.talespire.core.setting.SettingOption;
 import studio.talespire.core.setting.SettingService;
 import studio.talespire.core.setting.adapter.SettingMapAdapter;
+import studio.talespire.core.social.guild.GuildService;
+import studio.talespire.core.social.guild.model.Guild;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,9 +41,11 @@ public abstract class Profile {
     protected long firstSeen;
     protected long lastSeen;
 
-
     @JsonAdapter(SettingMapAdapter.class)
     protected ConcurrentHashMap<Setting<?>, SettingOption<?>> settings;
+
+    @Nullable
+    protected UUID guildId;
 
     protected transient Rank rank;
 
@@ -71,6 +76,7 @@ public abstract class Profile {
         this.rank = calculateRank();
         this.refreshPermissions();
     }
+
     public abstract void apply();
 
 
@@ -194,4 +200,10 @@ public abstract class Profile {
         return (SettingOption<T>) settings.get(settingObject);
     }
 
+    public Guild getGuild(){
+        if (this.guildId == null) {
+            return null;
+        }
+        return Universe.get(GuildService.class).getGuild(this.guildId);
+    }
 }

@@ -13,6 +13,7 @@ import studio.talespire.core.profile.Profile;
 import studio.talespire.core.rank.BukkitRankService;
 import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
+import studio.talespire.core.social.guild.BukkitGuildService;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -31,6 +32,7 @@ public class CoreBukkit extends Core {
         Universe.get(ServerService.class).registerProvider(new BukkitServerProvider());
         Universe.get().getRegistry().put(BukkitRankService.class, new BukkitRankService(plugin));
         Universe.get().getRegistry().put(BukkitProfileService.class, new BukkitProfileService(plugin));
+        Universe.get().getRegistry().put(BukkitGuildService.class, new BukkitGuildService(plugin));
 
 
     }
