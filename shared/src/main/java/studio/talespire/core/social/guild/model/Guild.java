@@ -3,6 +3,12 @@ package studio.talespire.core.social.guild.model;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
+import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.data.redis.RedisService;
+import studio.talespire.core.profile.Profile;
+import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.social.guild.GuildService;
+import studio.talespire.core.social.guild.packet.GuildKickPacket;
 
 import java.util.*;
 
@@ -28,6 +34,8 @@ public class Guild {
     private String name;
     private String description;
     private boolean mutechat;
+    private Set<UUID> mutedPlayers;
+    private String tag;
 
 
     public Guild(UUID leader, String name) {
@@ -37,11 +45,21 @@ public class Guild {
         this.createdAt = System.currentTimeMillis();
         this.description = "";
         this.members.put(leader, new GuildMember(leader, this.createdAt, GuildRole.LEADER));
+        this.mutedPlayers = new HashSet<>();
         for (GuildPermission value : GuildPermission.values()) {
             this.permissions.put(value, value.getDefaultRole());
         }
     }
 
+    public boolean isMuted(UUID playerId) {
+        if(this.mutechat) {
+            return true;
+        }
+        return this.mutedPlayers.contains(playerId);
+    }
+    public GuildMember getMember(UUID playerId) {
+        return this.members.get(playerId);
+    }
     public void setRole(UUID playerId, GuildRole role) {
         if (!members.containsKey(playerId)) {
             return;
@@ -56,8 +74,14 @@ public class Guild {
         return this.members.get(playerId).getRole();
     }
 
+    public boolean isMember(UUID playerId) {
+        return this.members.containsKey(playerId);
+    }
     public boolean hasPermission(UUID playerId, GuildPermission permission) {
         GuildRole requiredRole = this.permissions.getOrDefault(permission, permission.getDefaultRole());
+        return requiredRole.ordinal() >= getRole(playerId).ordinal();
+    }
+    public boolean hasPermission(UUID playerId, GuildRole requiredRole) {
         return requiredRole.ordinal() >= getRole(playerId).ordinal();
     }
 
@@ -81,5 +105,17 @@ public class Guild {
 
     public void createInvite(UUID inviter, UUID targetInvite) {
         this.invites.put(targetInvite, new GuildInvite(inviter, System.currentTimeMillis(), targetInvite));
+    }
+
+    public void kickMember(UUID kicker, UUID kicked) {
+        Universe.get(GuildService.class).saveGuild(this);
+        Universe.get(RedisService.class).publish(new GuildKickPacket(this.uuid, kicker, kicked));
+
+
+        Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(kicked);
+        if(profile != null) {
+            profile.setGuildId(null);
+            Universe.get(ProfileService.class).saveProfile(profile);
+        }
     }
 }

@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class SettingService {
     private final Map<String, Setting<?>> registeredSettings = new HashMap<>();
-
+    private final Map<Class<?>, String> classToName = new HashMap<>();
 
     public SettingService() {
         registerSetting(new PrivateMessageSetting());
@@ -24,9 +24,13 @@ public class SettingService {
 
     private void registerSetting(Setting<?> setting) {
         this.registeredSettings.put(setting.getId(), setting);
+        this.classToName.put(setting.getClass(), setting.getId());
     }
     public Setting<?> getSetting(String id) {
         return this.registeredSettings.get(id);
+    }
+    public Setting<?> getSetting(Class<? extends Setting<?>> setting) {
+        return this.registeredSettings.get(this.classToName.get(setting));
     }
     public Collection<Setting<?>> getSettings() {
         return this.registeredSettings.values();

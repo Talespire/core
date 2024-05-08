@@ -10,6 +10,8 @@ import java.util.UUID;
 /**
  * @author Moose1301
  * @date 5/6/2024
+ *
+ * Used to send invite messages to the guild and the player if they are online
  */
 @NoArgsConstructor @Getter
 public class GuildInvitePacket extends GuildPacket {

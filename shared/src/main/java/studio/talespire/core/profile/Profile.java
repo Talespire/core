@@ -193,7 +193,7 @@ public abstract class Profile {
 
     @SuppressWarnings("unchecked")
     public <T> SettingOption<T> getSetting(Class<? extends Setting<T>> setting) {
-        Setting<?> settingObject = Universe.get(SettingService.class).getSetting(setting.getSimpleName());
+        Setting<?> settingObject = Universe.get(SettingService.class).getSetting(setting);
         if (!settings.containsKey(settingObject)) {
             settings.put(settingObject, settingObject.getDefaultValue());
         }
