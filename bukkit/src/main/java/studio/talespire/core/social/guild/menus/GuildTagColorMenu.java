@@ -65,7 +65,7 @@ public class GuildTagColorMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            Guild guild = Universe.get(GuildService.class).getGuild(player.getUniqueId());
+            Guild guild = GetGuild(player);
             guild.setColor(NamedTextColor.GRAY);
             Universe.get(GuildService.class).saveGuild(guild);
             player.sendMessage(ChatColor.GREEN + "Guild tag color set to " + ChatColor.GRAY + "Gray");
@@ -91,7 +91,7 @@ public class GuildTagColorMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            Guild guild = Universe.get(GuildService.class).getGuild(player.getUniqueId());
+            Guild guild = GetGuild(player);
             guild.setColor(NamedTextColor.GOLD);
             Universe.get(GuildService.class).saveGuild(guild);
             player.sendMessage(ChatColor.GREEN + "Guild tag color set to " + ChatColor.GOLD + "Gold");
@@ -118,7 +118,7 @@ public class GuildTagColorMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            Guild guild = Universe.get(GuildService.class).getGuild(player.getUniqueId());
+            Guild guild = GetGuild(player);
             guild.setColor(NamedTextColor.DARK_AQUA);
             Universe.get(GuildService.class).saveGuild(guild);
             player.sendMessage(ChatColor.GREEN + "Guild tag color set to " + ChatColor.DARK_AQUA + "Dark Aqua");
@@ -146,7 +146,7 @@ public class GuildTagColorMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            Guild guild = Universe.get(GuildService.class).getGuild(player.getUniqueId());
+            Guild guild = GetGuild(player);
             guild.setColor(NamedTextColor.DARK_GREEN);
             Universe.get(GuildService.class).saveGuild(guild);
             player.sendMessage(ChatColor.GREEN + "Guild tag color set to " + ChatColor.DARK_GREEN + "Dark Green");
@@ -174,7 +174,7 @@ public class GuildTagColorMenu extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            Guild guild = Universe.get(GuildService.class).getGuild(player.getUniqueId());
+            Guild guild = GetGuild(player);
             guild.setColor(NamedTextColor.YELLOW);
             Universe.get(GuildService.class).saveGuild(guild);
             player.sendMessage(ChatColor.GREEN + "Guild tag color set to " + ChatColor.YELLOW + "Yellow");

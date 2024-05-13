@@ -22,14 +22,24 @@ import java.util.concurrent.TimeoutException;
  */
 public class BukkitProfileUtils {
     public static void updatePlayerDisplay(Player player, Profile profile) {
-        player.playerListName(Component.text()
-                .append(Component.text("["+profile.getGuild().getTag()+"]", NamedTextColor.nearestTo(profile.getGuild().getColor())))
-                .append(Component.space())
-                .append(profile.getRank().getTabPrefix())
-                .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
-                .append(profile.getFormattedName())
-                .build()
-        );
+        if (profile.getGuild() != null) {
+            player.playerListName(Component.text()
+                    .append(profile.getRank().getTabPrefix())
+                    .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
+                    .append(profile.getFormattedName())
+                    .append(Component.space())
+                    .append(Component.text("[" + profile.getGuild().getTag() + "]", NamedTextColor.nearestTo(profile.getGuild().getColor())))
+                    .build()
+            );
+        } else {
+            player.playerListName(Component.text()
+                    .append(profile.getRank().getTabPrefix())
+                    .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
+                    .append(profile.getFormattedName())
+                    .build()
+            );
+
+        }
     }
     public static Component getFormatedName(UUID playerId) {
         Profile profile = Universe.get(ProfileService.class).getProfile(playerId);
