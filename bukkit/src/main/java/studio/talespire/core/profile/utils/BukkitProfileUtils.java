@@ -22,6 +22,7 @@ import java.util.concurrent.TimeoutException;
 public class BukkitProfileUtils {
     public static void updatePlayerDisplay(Player player, Profile profile) {
         player.playerListName(Component.text()
+                .append(profile.getGuild().getTag())
                 .append(profile.getRank().getTabPrefix())
                 .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
                 .append(profile.getFormattedName())

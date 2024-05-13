@@ -3,6 +3,9 @@ package studio.talespire.core.social.guild.model;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.talespire.core.profile.Profile;
@@ -35,8 +38,8 @@ public class Guild {
     private String description;
     private boolean mutechat;
     private Set<UUID> mutedPlayers;
-    private String tag;
-
+    private Component tag;
+    private TextColor color;
 
     public Guild(UUID leader, String name) {
         this.uuid = UUID.randomUUID();
@@ -49,6 +52,8 @@ public class Guild {
         for (GuildPermission value : GuildPermission.values()) {
             this.permissions.put(value, value.getDefaultRole());
         }
+        this.tag = null;
+        this.color = NamedTextColor.GRAY;
     }
 
     public boolean isMuted(UUID playerId) {
