@@ -21,7 +21,6 @@ import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
 import studio.talespire.core.social.guild.packet.GuildInvitePacket;
 
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -32,6 +31,12 @@ public class InviteInputPrompt extends ValidatingPrompt {
 
     @Override
     protected boolean isInputValid(@NotNull ConversationContext conversationContext, @NotNull String s) {
+        if (Bukkit.getPlayer(s) == null) {
+            if (Bukkit.getOfflinePlayer(s) == null) {
+                conversationContext.getForWhom().sendRawMessage(ChatColor.RED + "Player not found");
+                return false;
+            }
+        }
         return true;
     }
 
@@ -39,7 +44,7 @@ public class InviteInputPrompt extends ValidatingPrompt {
     protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext conversationContext, @NotNull String input) {
         callback.accept(input);
 
-        Player player = conversationContext.getForWhom() instanceof Player ? (Player) conversationContext.getForWhom() : null;
+        Player player = (Player) conversationContext.getForWhom();
         UUID targetId = Bukkit.getPlayer(input).getUniqueId();
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
 
@@ -86,6 +91,6 @@ public class InviteInputPrompt extends ValidatingPrompt {
 
     @Override
     public @NotNull String getPromptText(@NotNull ConversationContext conversationContext) {
-        return ChatColor.GOLD + "Please input the name of the player you want to invite!";
+        return ChatColor.GREEN + "Please input the name of the player you want to invite!";
     }
 }

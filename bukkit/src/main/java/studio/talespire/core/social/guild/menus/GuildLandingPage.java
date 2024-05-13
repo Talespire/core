@@ -18,6 +18,7 @@ import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
+import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
@@ -146,7 +147,8 @@ public class GuildLandingPage extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            // Open the guild settings menu
+            player.closeInventory();
+            Universe.get(MenuHandler.class).openMenuAsync(player, new GuildSettings());
         }
     }
 
