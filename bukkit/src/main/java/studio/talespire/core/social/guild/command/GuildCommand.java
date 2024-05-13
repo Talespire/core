@@ -8,6 +8,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
+import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.util.Statics;
 import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.CorePlugin;
@@ -16,6 +17,7 @@ import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
 import studio.talespire.core.social.guild.GuildService;
 import studio.talespire.core.social.guild.command.param.GuildParameter;
+import studio.talespire.core.social.guild.menus.GuildLandingPage;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildMember;
 import studio.talespire.core.social.guild.model.GuildPermission;
@@ -35,8 +37,14 @@ import java.util.concurrent.TimeoutException;
  * @date 5/5/2024
  */
 
-@Command(names = "guild", description = "Guild Commands")
+@Command(names = {"guild", "g"}, description = "Guild Commands")
 public class GuildCommand {
+
+    @Children(names = "open", permission = "*", async = true)
+    public void handleOpen(Player player) {
+        Universe.get(MenuHandler.class).openMenuAsync(player, new GuildLandingPage(player));
+    }
+
     @Children(names = "create", permission = "hero", async = true)
     public void handleCreate(Player player, @Param(name = "Name", wildcard = true) String name) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());

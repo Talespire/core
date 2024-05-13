@@ -26,7 +26,7 @@ public  enum Rank {
 
 
     IMMORTAL("Immortal", "Immortal", NamedTextColor.GOLD),
-    DIVINE("Divine", "Divine]", NamedTextColor.DARK_BLUE),
+    DIVINE("Divine", "Divine", NamedTextColor.DARK_BLUE),
     CHAMPION("Champion", "Champion", NamedTextColor.LIGHT_PURPLE),
     HERO("Hero", "Hero", NamedTextColor.AQUA),
     ADVENTURER("Adventurer", "Adventurer", NamedTextColor.GREEN),

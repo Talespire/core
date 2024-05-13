@@ -18,4 +18,6 @@ dependencies {
     compileOnly "me.andyreckt.raspberry:shared:1.1.22"
     compileOnly "me.andyreckt.raspberry:paper:1.1.22"
 
+    compileOnly "studio.talespire.profile:shared:0.0.1"
+
 }
