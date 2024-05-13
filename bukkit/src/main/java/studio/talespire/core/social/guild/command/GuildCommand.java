@@ -5,6 +5,7 @@ import me.andyreckt.raspberry.annotation.Command;
 import me.andyreckt.raspberry.annotation.Param;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
@@ -232,6 +233,8 @@ public class GuildCommand {
             );
             return;
         }
+
+//        final Component component = PlainTextComponentSerializer.plainText().deserialize(tag);
         guild.setTag(tag);
         Universe.get(GuildService.class).saveGuild(guild);
         Universe.get(RedisService.class).publish(new GuildTagPacket(guild.getUuid(), player.getUniqueId(), tag));

@@ -13,9 +13,12 @@ import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
+import studio.lunarlabs.universe.menus.api.MenuHandler;
+import studio.lunarlabs.universe.menus.api.button.BackButton;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.social.guild.menus.conversation.TagInputPrompt;
+import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
 import studio.talespire.core.social.guild.model.GuildRole;
 
@@ -37,8 +40,11 @@ public class GuildSettings extends Menu {
     public Map<Integer, Button> getButtons(Player player) {
         Map<Integer, Button> buttons = new HashMap<>();
 
-        buttons.put(getSlot(1, 1), new GuildTagButton());
-        buttons.put(getSlot(2, 1), new TagColorButton());
+        buttons.put(getSlot(3, 1), new GuildTagButton());
+        buttons.put(getSlot(4, 1), new TagColorButton());
+        buttons.put(getSlot(5, 1), new DescriptionButton());
+
+        buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true));
 
         return buttons;
     }
@@ -47,20 +53,23 @@ public class GuildSettings extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
 
             return new ItemBuilder(Material.NAME_TAG)
                     .setName(ChatColor.GREEN + "Guild Tag")
                     .addLoreLine(ChatColor.GRAY + "Changes the tag next to your guild")
                     .addLoreLine(ChatColor.GRAY + "member's names.")
                     .addLoreLine("")
-                    .addLoreLine(GuildPermission.TAG.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild tag.")
+                    .addLoreLine(!guild.hasPermission(player.getUniqueId(), GuildPermission.TAG) ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild tag.")
                     .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            if (GuildPermission.TAG.getDefaultRole() != Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId())) {
+
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
+
+            if (!guild.hasPermission(player.getUniqueId(), GuildPermission.TAG)) {
                 player.sendMessage(ChatColor.RED + "You do not have permission to change this!");
             } else {
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
@@ -83,20 +92,29 @@ public class GuildSettings extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
 
             return new ItemBuilder(Material.CYAN_DYE)
                     .setName(ChatColor.GREEN + "Guild Tag Color")
                     .addLoreLine(ChatColor.GRAY + "Changes the color of the tag next to your guild")
                     .addLoreLine(ChatColor.GRAY + "member's names.")
                     .addLoreLine("")
-                    .addLoreLine(GuildPermission.TAG.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild tag color.")
+                    .addLoreLine(!guild.hasPermission(player.getUniqueId(), GuildPermission.TAG) ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild tag.")
                     .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            // Opens tag color gui
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
+
+            if (!guild.hasPermission(player.getUniqueId(), GuildPermission.TAG)) {
+                player.sendMessage(ChatColor.RED + "You do not have permission to change this!");
+            } else {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+                player.closeInventory();
+
+                Universe.get(MenuHandler.class).openMenuAsync(new GuildTagColorMenu(), player);
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package studio.talespire.core.profile.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.uuid.UUIDCache;
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeoutException;
 public class BukkitProfileUtils {
     public static void updatePlayerDisplay(Player player, Profile profile) {
         player.playerListName(Component.text()
-                .append(profile.getGuild().getTag())
+                .append(Component.text("["+profile.getGuild().getTag()+"]", NamedTextColor.nearestTo(profile.getGuild().getColor())))
+                .append(Component.space())
                 .append(profile.getRank().getTabPrefix())
                 .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
                 .append(profile.getFormattedName())

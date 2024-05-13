@@ -38,7 +38,7 @@ public class Guild {
     private String description;
     private boolean mutechat;
     private Set<UUID> mutedPlayers;
-    private Component tag;
+    private String tag;
     private TextColor color;
 
     public Guild(UUID leader, String name) {

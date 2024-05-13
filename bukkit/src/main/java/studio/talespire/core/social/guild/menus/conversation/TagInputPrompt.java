@@ -3,6 +3,7 @@ package studio.talespire.core.social.guild.menus.conversation;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
+import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.social.guild.GuildService;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
@@ -37,12 +39,13 @@ public class TagInputPrompt extends ValidatingPrompt {
     protected @Nullable Prompt acceptValidatedInput(@NotNull ConversationContext conversationContext, @NotNull String s) {
         callback.accept(s);
 
-        Guild guild = Universe.get(GuildService.class).getGuild(((Player) conversationContext.getForWhom()).getUniqueId());
-        Player player = (Player) conversationContext.getForWhom();
+        Guild guild = Universe.get(ProfileService.class).getProfile(((Player) conversationContext.getForWhom()).getUniqueId()).getGuild();
+        Player player = conversationContext.getForWhom() instanceof Player ? (Player) conversationContext.getForWhom() : null;
 
         guild.setTag(s);
         Universe.get(GuildService.class).saveGuild(guild);
         Universe.get(RedisService.class).publish(new GuildTagPacket(guild.getUuid(), player.getUniqueId(), s));
+        player.sendMessage(ChatColor.GREEN + "Guild tag set to " + s + "!");
         return Prompt.END_OF_CONVERSATION;
     }
 
