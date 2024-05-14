@@ -40,7 +40,7 @@ public class GuildTagColorMenu extends Menu {
         buttons.put(getSlot(4, 1), new DarkGreenColorButton());
         buttons.put(getSlot(5, 1), new YellowColorButton());
 
-        buttons.put(getSlot(4, 2), new BackButton(new GuildSettings(), true));
+        buttons.put(getSlot(4, 2), new BackButton(new GuildSettings(), true, true));
 
         return buttons;
     }

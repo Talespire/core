@@ -28,7 +28,7 @@ public class BukkitProfileUtils {
                     .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
                     .append(profile.getFormattedName())
                     .append(Component.space())
-                    .append(Component.text("[" + profile.getGuild().getTag() + "]", NamedTextColor.nearestTo(profile.getGuild().getColor())))
+                    .append(Component.text("[" + profile.getGuild().getTag() + "]", profile.getGuild().getColor()))
                     .build()
             );
         } else {

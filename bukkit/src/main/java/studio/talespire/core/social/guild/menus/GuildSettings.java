@@ -47,7 +47,7 @@ public class GuildSettings extends Menu {
 
         buttons.put(getSlot(7, 1), new DiscordButton());
 
-        buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true));
+        buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true, true));
 
         return buttons;
     }

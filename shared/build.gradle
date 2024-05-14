@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("studio.lunarlabs.universe:universe-shared:0.0.1")
+    compileOnly("studio.talespire.universe:universe-shared:0.0.1")
 
     compileOnly("net.kyori:adventure-api:4.16.0")
 
