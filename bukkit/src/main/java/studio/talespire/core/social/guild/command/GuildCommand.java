@@ -4,6 +4,7 @@ import me.andyreckt.raspberry.annotation.Children;
 import me.andyreckt.raspberry.annotation.Command;
 import me.andyreckt.raspberry.annotation.Param;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
@@ -19,6 +20,7 @@ import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
 import studio.talespire.core.social.guild.GuildService;
 import studio.talespire.core.social.guild.command.param.GuildParameter;
 import studio.talespire.core.social.guild.menus.GuildLandingPage;
+import studio.talespire.core.social.guild.menus.GuildSettings;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildMember;
 import studio.talespire.core.social.guild.model.GuildPermission;
@@ -27,7 +29,10 @@ import studio.talespire.core.social.guild.packet.GuildInvitePacket;
 import studio.talespire.core.social.guild.packet.GuildMuteChatPacket;
 import studio.talespire.core.social.guild.packet.GuildRolePacket;
 import studio.talespire.core.social.guild.packet.GuildTagPacket;
+import studio.talespire.core.utils.MenuUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -41,14 +46,26 @@ import java.util.concurrent.TimeoutException;
 @Command(names = {"guild", "g"}, description = "Guild Commands")
 public class GuildCommand {
 
-    @Children(names = "open", permission = "*", async = true)
+    /**
+     * Opens the guild menu
+     * @param player
+     */
+    @Children(names = "open", permission = "*", async = true, description = "Opens the guild menu")
     public void handleOpen(Player player) {
         Universe.get(MenuHandler.class).openMenuAsync(player, new GuildLandingPage(player));
     }
 
-    @Children(names = "create", permission = "hero", async = true)
+    /**
+     * Creates a new guild
+     * @param player
+     * @param name
+     */
+    @Children(names = "create", permission = "hero", async = true, description = "Creates a new guild")
     public void handleCreate(Player player, @Param(name = "Name", wildcard = true) String name) {
+        // Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        // Checks if the player is already in a guild, and if the name is valid
         if (profile.getGuild() != null) {
             player.sendMessage(Component.text("You are already in a guild", NamedTextColor.RED));
             return;
@@ -58,6 +75,7 @@ public class GuildCommand {
             return;
         }
 
+        // Create a new Guild
         Guild guild = new Guild(player.getUniqueId(), name);
         Universe.get(GuildService.class).registerGuild(guild);
         profile.setGuildId(guild.getUuid());
@@ -65,16 +83,77 @@ public class GuildCommand {
         player.sendMessage(Component.text("You have created a guild with the name", NamedTextColor.GREEN)
                 .append(Component.space())
                 .append(Component.text(name, NamedTextColor.YELLOW)));
+
+        // Open the guild's menu
+        Universe.get(MenuHandler.class).openMenuAsync(player, new GuildLandingPage(player));
     }
 
-    @Children(names = "info", async = true)
-    public void handleInfo(Player player, @Param(name = "Guild", baseValue = GuildParameter.DEFAULT_VALUE_SELF) Guild guild) {
-        player.sendMessage(Statics.gson().toJson(guild));
-    }
-
-    @Children(names = "invite", async = true)
-    public void handleInvite(Player player, @Param(name = "Target") UUID targetId) {
+    /**
+     * Disbands the guild
+     * @param player
+     */
+    @Children(names = "disband", permission = "hero", async = true, description = "Disbands the guild")
+    public void handleDisband(Player player) {
+        // Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        // Check if the player is in a guild and if they are the leader
+        if (profile.getGuild() == null) {
+            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            return;
+        }
+        if (!profile.getGuild().getLeader().equals(player.getUniqueId())) {
+            player.sendMessage(Component.text("You are not the leader of the guild", NamedTextColor.RED));
+            return;
+        }
+
+        // Disband the guild
+        Guild guild = profile.getGuild();
+        Universe.get(GuildService.class).deleteGuild(guild);
+        profile.setGuildId(null);
+        Universe.get(ProfileService.class).saveProfile(profile);
+        player.sendMessage(Component.text("You have disbanded the guild", NamedTextColor.GREEN)
+                .append(Component.space())
+                .append(Component.text(guild.getName(), NamedTextColor.YELLOW)));
+    }
+
+    /**
+     * Grabs the most relevent information of the guild
+     * @param player
+     * @param guild
+     */
+    @Children(names = "info", async = true, description = "Gets the info of the guild")
+    public void handleInfo(Player player, @Param(name = "Guild", baseValue = GuildParameter.DEFAULT_VALUE_SELF) Guild guild) {
+        final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+
+        // Create a text component with the guild's information
+        Component text = Component.text()
+                .append(MenuUtils.menuSeparator())
+                .append(MenuUtils.centerSeparator(10, Component.text(guild.getName(), NamedTextColor.GOLD)))
+                .append(Component.text(""))
+                .append(Component.text("Created: ", NamedTextColor.AQUA), Component.text(dateFormat.format(guild.getCreatedAt()), NamedTextColor.YELLOW))
+                .append(Component.text("Description: ", NamedTextColor.AQUA), Component.text(guild.getDescription(), NamedTextColor.YELLOW))
+                .append(Component.text(""))
+                .append(Component.text("Members: ", NamedTextColor.AQUA), Component.text(guild.getMembers().size(), NamedTextColor.YELLOW))
+                .append(Component.text("Discord: ", NamedTextColor.AQUA), Component.text(guild.getDiscord(), NamedTextColor.YELLOW))
+                .append(MenuUtils.menuSeparator())
+                .build();
+
+        // Send it to the player
+        player.sendMessage(text);
+    }
+
+    /**
+     * Invites a player to the guild
+     * @param player
+     * @param targetId
+     */
+    @Children(names = "invite", async = true, description = "Invites a player to your guild")
+    public void handleInvite(Player player, @Param(name = "Target") UUID targetId) {
+        // Instance Variables
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        // Check if the player is in a guild, if they have perms to invite, if the target is already in the guild, if the target has already been invited, and if the target can be invited
         if (profile.getGuild() == null) {
             player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
             return;
@@ -108,31 +187,50 @@ public class GuildCommand {
             return;
         }
 
+        // Invite the player to the guild
         guild.createInvite(profile.getUuid(), targetProfile.getUuid());
         Universe.get(GuildService.class).saveGuild(guild);
         Universe.get(RedisService.class).publish(new GuildInvitePacket(guild.getUuid(), profile.getUuid(), targetProfile.getUuid()));
     }
 
-    @Children(names = "settings", async = true)
-    public void handleInvite(Player player) {
+    /**
+     *  Opens the Settings menu for that player
+     * @param player
+     */
+    @Children(names = "settings", async = true, description = "Opens your current guild's settings")
+    public void handleSettings(Player player) {
+        // Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        // Check if the player ins't in a guild
         if (profile.getGuild() == null) {
             player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
             return;
         }
+
+        // Otherwise opens the settings menu
         Guild guild = profile.getGuild();
-        //open the menu for seting it
+        Universe.get(MenuHandler.class).openMenuAsync(player, new GuildSettings());
     }
 
-    @Children(names = "mute", async = true)
-    public void handleMute(Player player, @Param(name = "Target") String target) {
+    /**
+     * Mutes a player and prevents them from being able to speak in guild chat
+     * @param player
+     * @param target
+     */
+    @Children(names = "mute", async = true, description = "<Target/All> Mutes the chat for the guild")
+    public void handleMute(Player player, @Param(name = "Target") String target) {\
+        // Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        // Checks if the player is in a guild
         if (profile.getGuild() == null) {
             player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
             return;
         }
-        Guild guild = profile.getGuild();
 
+        // If they are, check to what scope and permission that player has
+        Guild guild = profile.getGuild();
         if (target.equalsIgnoreCase("all")) {
             if (!guild.hasPermission(player.getUniqueId(), GuildPermission.MUTE_ALL)) {
                 player.sendMessage(Component.text()
@@ -194,8 +292,12 @@ public class GuildCommand {
         ));
     }
 
-
-    @Children(names = "description", async = true)
+    /**
+     * Allows the user to set the guild's description
+     * @param player
+     * @param description
+     */
+    @Children(names = "description", async = true, description = "Sets the guild's description")
     public void handleDescription(Player player, @Param(name = "Description", wildcard = true) String description) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if (profile.getGuild() == null) {
@@ -213,7 +315,7 @@ public class GuildCommand {
         Universe.get(GuildService.class).saveGuild(guild);
     }
 
-    @Children(names = "tag", async = true)
+    @Children(names = "tag", async = true, description = "Sets the guild [TAG]")
     public void handleTag(Player player, @Param(name = "Description") String tag) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
 
@@ -241,7 +343,7 @@ public class GuildCommand {
     }
 
 
-    @Children(names = "kick", async = true)
+    @Children(names = "kick", async = true, description = "Kicks the player from your guild")
     public void handleKick(Player player, @Param(name = "Target") UUID target) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if (profile.getGuild() == null) {
@@ -289,7 +391,7 @@ public class GuildCommand {
         guild.kickMember(player.getUniqueId(), target);
     }
 
-    @Children(names = "promote", async = true)
+    @Children(names = "promote", async = true, description = "Promotes the player to the next rank")
     public void handlePromote(Player player, @Param(name = "Target") UUID target) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if (profile.getGuild() == null) {
@@ -345,7 +447,7 @@ public class GuildCommand {
         Universe.get(RedisService.class).publish(new GuildRolePacket(guild.getUuid(), player.getUniqueId(), target, false));
     }
 
-    @Children(names = "leader", async = true)
+    @Children(names = "transfer", async = true, description = "Transfers ownership of the guild to another player")
     public void handleLeader(Player player, @Param(name = "Target") UUID target) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if (profile.getGuild() == null) {
@@ -390,7 +492,7 @@ public class GuildCommand {
         Universe.get(RedisService.class).publish(new GuildRolePacket(guild.getUuid(), player.getUniqueId(), target, false));
     }
 
-    @Children(names = "demote", async = true)
+    @Children(names = "demote", async = true, description = "Demotes the player to the previous rank")
     public void handleDemote(Player player, @Param(name = "Target") UUID target) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if (profile.getGuild() == null) {

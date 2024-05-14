@@ -1,8 +1,15 @@
 package studio.talespire.core.social.guild.menus;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.Context;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.ArgumentQueue;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.Tag;
 import org.bukkit.conversations.Conversation;
 import org.bukkit.conversations.ConversationFactory;
 import org.bukkit.conversations.NullConversationPrefix;
@@ -17,6 +24,7 @@ import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.menus.api.button.BackButton;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.social.guild.menus.conversation.DiscordInputPrompt;
 import studio.talespire.core.social.guild.menus.conversation.InviteInputPrompt;
 import studio.talespire.core.social.guild.menus.conversation.TagInputPrompt;
 import studio.talespire.core.social.guild.model.Guild;
@@ -41,11 +49,11 @@ public class GuildSettings extends Menu {
     public Map<Integer, Button> getButtons(Player player) {
         Map<Integer, Button> buttons = new HashMap<>();
 
-        buttons.put(getSlot(3, 1), new GuildTagButton());
-        buttons.put(getSlot(4, 1), new TagColorButton());
-        buttons.put(getSlot(5, 1), new DescriptionButton());
+        buttons.put(getSlot(2, 1), new GuildTagButton());
+        buttons.put(getSlot(3, 1), new TagColorButton());
+        buttons.put(getSlot(4, 1), new DescriptionButton());
 
-        buttons.put(getSlot(7, 1), new DiscordButton());
+        buttons.put(getSlot(6, 1), new DiscordButton());
 
         buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true, true));
 
@@ -125,19 +133,19 @@ public class GuildSettings extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
 
             return new ItemBuilder(Material.WRITABLE_BOOK)
                     .setName(ChatColor.GREEN + "Guild Description")
                     .addLoreLine(ChatColor.GRAY + "Changes the description of your guild.")
                     .addLoreLine("")
-                    .addLoreLine(GuildPermission.DESCRIPTION.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild description.")
+                    .addLoreLine(!guild.hasPermission(player.getUniqueId(), GuildPermission.DESCRIPTION) ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild description.")
                     .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            // Open a conversation to set the guild description
+            //TODO: Open a conversation to set the guild description
         }
     }
 
@@ -145,18 +153,23 @@ public class GuildSettings extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
 
             return new ItemBuilder(Material.WRITABLE_BOOK)
                     .setName(ChatColor.GREEN + "Guild MOTD")
                     .addLoreLine(ChatColor.GRAY + "Changes the message of the day for your guild.")
                     .addLoreLine("")
-                    .addLoreLine(GuildPermission.MOTD.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild MOTD.")
+                    .addLoreLine(!guild.hasPermission(player.getUniqueId(), GuildPermission.MOTD) ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the MOTD")
                     .toItemStack();
         }
 
         @Override
         public void clicked(Player player, ClickType clickType) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+            player.closeInventory();
+
+            //TODO: Open a conversation to set the guild MOTD
+
             // Open a conversation to set the guild MOTD
         }
     }
@@ -165,13 +178,14 @@ public class GuildSettings extends Menu {
 
         @Override
         public ItemStack getItem(Player player) {
-            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+            Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
 
-            return new ItemBuilder(Material.WRITABLE_BOOK)
+            return new ItemBuilder(Material.PLAYER_HEAD)
+                    .setSkullOwner("PurityGuildBot")
                     .setName(ChatColor.GREEN + "Guild Discord")
                     .addLoreLine(ChatColor.GRAY + "Changes the Discord URL for your guild.")
                     .addLoreLine("")
-                    .addLoreLine(GuildPermission.DISCORD.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild Discord URL.")
+                    .addLoreLine(!guild.hasPermission(player.getUniqueId(), GuildPermission.TAG) ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild tag.")
                     .toItemStack();
         }
 
@@ -186,7 +200,7 @@ public class GuildSettings extends Menu {
                     .withLocalEcho(false)
                     .withEscapeSequence("cancel")
                     .withTimeout(60)
-                    .withFirstPrompt(new InviteInputPrompt(s -> new GuildSettings().openAsync(player)))
+                    .withFirstPrompt(new DiscordInputPrompt(s -> new GuildSettings().openAsync(player)))
                     .buildConversation(player);
             player.beginConversation(conversation);
         }
