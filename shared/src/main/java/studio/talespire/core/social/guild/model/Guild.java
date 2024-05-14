@@ -36,7 +36,7 @@ public class Guild {
     private UUID leader;
     private String name;
     private String description;
-    private String discord;
+    private String discord = "";
     private boolean mutechat;
     private Set<UUID> mutedPlayers;
     private String tag;
@@ -66,6 +66,11 @@ public class Guild {
     public GuildMember getMember(UUID playerId) {
         return this.members.get(playerId);
     }
+
+    public void addMember(UUID playerId) {
+        this.members.put(playerId, new GuildMember(playerId, System.currentTimeMillis(), GuildRole.MEMBER));
+    }
+
     public void setRole(UUID playerId, GuildRole role) {
         if (!members.containsKey(playerId)) {
             return;
@@ -85,7 +90,7 @@ public class Guild {
     }
     public boolean hasPermission(UUID playerId, GuildPermission permission) {
         GuildRole requiredRole = this.permissions.getOrDefault(permission, permission.getDefaultRole());
-        return requiredRole.ordinal() >= getRole(playerId).ordinal();
+        return requiredRole.ordinal() <= getRole(playerId).ordinal();
     }
     public boolean hasPermission(UUID playerId, GuildRole requiredRole) {
         return requiredRole.ordinal() >= getRole(playerId).ordinal();

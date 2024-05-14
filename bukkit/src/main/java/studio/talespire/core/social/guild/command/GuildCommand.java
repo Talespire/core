@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
@@ -25,10 +26,7 @@ import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildMember;
 import studio.talespire.core.social.guild.model.GuildPermission;
 import studio.talespire.core.social.guild.model.GuildRole;
-import studio.talespire.core.social.guild.packet.GuildInvitePacket;
-import studio.talespire.core.social.guild.packet.GuildMuteChatPacket;
-import studio.talespire.core.social.guild.packet.GuildRolePacket;
-import studio.talespire.core.social.guild.packet.GuildTagPacket;
+import studio.talespire.core.social.guild.packet.*;
 import studio.talespire.core.utils.MenuUtils;
 
 import java.text.DateFormat;
@@ -45,15 +43,6 @@ import java.util.concurrent.TimeoutException;
 
 @Command(names = {"guild", "g"}, description = "Guild Commands")
 public class GuildCommand {
-
-    /**
-     * Opens the guild menu
-     * @param player
-     */
-    @Children(names = "open", permission = "*", async = true, description = "Opens the guild menu")
-    public void handleOpen(Player player) {
-        Universe.get(MenuHandler.class).openMenuAsync(player, new GuildLandingPage(player));
-    }
 
     /**
      * Creates a new guild
@@ -80,6 +69,8 @@ public class GuildCommand {
         Universe.get(GuildService.class).registerGuild(guild);
         profile.setGuildId(guild.getUuid());
         Universe.get(ProfileService.class).saveProfile(profile);
+        Universe.get(RedisService.class).publish(new GuildCreatePacket(guild.getUuid()));
+
         player.sendMessage(Component.text("You have created a guild with the name", NamedTextColor.GREEN)
                 .append(Component.space())
                 .append(Component.text(name, NamedTextColor.YELLOW)));
@@ -109,38 +100,27 @@ public class GuildCommand {
 
         // Disband the guild
         Guild guild = profile.getGuild();
+
+        guild.getMembers().forEach((key, guildMember) -> {
+            Player p = Bukkit.getPlayer(guildMember.getPlayerId());
+            if (p != null) {
+                p.sendMessage(Component.text("The guild has been disbanded", NamedTextColor.RED));
+            }
+        });
+
+        guild.getMembers().forEach((key, guildMember) -> {
+                    Profile memberProfile = Universe.get(ProfileService.class).getProfile(guildMember.getPlayerId());
+                    memberProfile.setGuildId(null);
+                    Universe.get(ProfileService.class).saveProfile(memberProfile);
+        });
+
         Universe.get(GuildService.class).deleteGuild(guild);
-        profile.setGuildId(null);
         Universe.get(ProfileService.class).saveProfile(profile);
+        Universe.get(RedisService.class).publish(new GuildDeletePacket(guild.getUuid()));
+
         player.sendMessage(Component.text("You have disbanded the guild", NamedTextColor.GREEN)
                 .append(Component.space())
                 .append(Component.text(guild.getName(), NamedTextColor.YELLOW)));
-    }
-
-    /**
-     * Grabs the most relevent information of the guild
-     * @param player
-     * @param guild
-     */
-    @Children(names = "info", async = true, description = "Gets the info of the guild")
-    public void handleInfo(Player player, @Param(name = "Guild", baseValue = GuildParameter.DEFAULT_VALUE_SELF) Guild guild) {
-        final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-
-        // Create a text component with the guild's information
-        Component text = Component.text()
-                .append(MenuUtils.menuSeparator())
-                .append(MenuUtils.centerSeparator(10, Component.text(guild.getName(), NamedTextColor.GOLD)))
-                .append(Component.text(""))
-                .append(Component.text("Created: ", NamedTextColor.AQUA), Component.text(dateFormat.format(guild.getCreatedAt()), NamedTextColor.YELLOW))
-                .append(Component.text("Description: ", NamedTextColor.AQUA), Component.text(guild.getDescription(), NamedTextColor.YELLOW))
-                .append(Component.text(""))
-                .append(Component.text("Members: ", NamedTextColor.AQUA), Component.text(guild.getMembers().size(), NamedTextColor.YELLOW))
-                .append(Component.text("Discord: ", NamedTextColor.AQUA), Component.text(guild.getDiscord(), NamedTextColor.YELLOW))
-                .append(MenuUtils.menuSeparator())
-                .build();
-
-        // Send it to the player
-        player.sendMessage(text);
     }
 
     /**
@@ -149,48 +129,216 @@ public class GuildCommand {
      * @param targetId
      */
     @Children(names = "invite", async = true, description = "Invites a player to your guild")
-    public void handleInvite(Player player, @Param(name = "Target") UUID targetId) {
+    public void handleInvite(Player invitor, @Param(name = "Target") Player target) {
         // Instance Variables
-        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+        Profile profile = Universe.get(ProfileService.class).getProfile(invitor.getUniqueId());
 
         // Check if the player is in a guild, if they have perms to invite, if the target is already in the guild, if the target has already been invited, and if the target can be invited
         if (profile.getGuild() == null) {
-            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            invitor.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
             return;
         }
         Guild guild = profile.getGuild();
-        if (!guild.hasPermission(player.getUniqueId(), GuildPermission.INVITE)) {
-            player.sendMessage(Component.text()
+        if (!guild.hasPermission(invitor.getUniqueId(), GuildPermission.INVITE)) {
+            invitor.sendMessage(Component.text()
                     .append(Component.text("You do not have permission to do this", NamedTextColor.RED))
             );
             return;
         }
-        Profile targetProfile = Universe.get(ProfileService.class).getOrLoadProfile(targetId);
+        Profile targetProfile = Universe.get(ProfileService.class).getOrLoadProfile(target.getUniqueId());
         if (guild.getMembers().containsKey(targetProfile.getUuid())) {
-            player.sendMessage(Component.text()
+            invitor.sendMessage(Component.text()
                     .append(targetProfile.getFormattedName())
                     .append(Component.text(" is already in your guild", NamedTextColor.RED))
             );
             return;
         }
         if (guild.getInvites().containsKey(targetProfile.getUuid())) {
-            player.sendMessage(Component.text()
+            invitor.sendMessage(Component.text()
                     .append(targetProfile.getFormattedName())
                     .append(Component.text(" has already been invited to your guild", NamedTextColor.RED))
             );
             return;
         }
         if (!targetProfile.getSetting(GuildInviteSetting.class).value().doesMatch(profile, targetProfile)) {
-            player.sendMessage(Component.text("You cannot invite ", NamedTextColor.RED)
+            invitor.sendMessage(Component.text("You cannot invite ", NamedTextColor.RED)
                     .append(Component.text(targetProfile.getUsername(), NamedTextColor.YELLOW))
             );
             return;
         }
 
+        invitor.sendMessage(Component.text("You have invited", NamedTextColor.GREEN)
+                .append(Component.space())
+                .append(targetProfile.getFormattedName())
+                .append(Component.space())
+                .append(Component.text("to join the guild", NamedTextColor.GREEN)));
+
         // Invite the player to the guild
         guild.createInvite(profile.getUuid(), targetProfile.getUuid());
         Universe.get(GuildService.class).saveGuild(guild);
         Universe.get(RedisService.class).publish(new GuildInvitePacket(guild.getUuid(), profile.getUuid(), targetProfile.getUuid()));
+
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            if (p.getUniqueId() == (target.getUniqueId())) {
+                p.sendMessage(Component.text("You have been invited to join the guild", NamedTextColor.GREEN)
+                        .append(Component.space())
+                        .append(Component.text(guild.getName(), NamedTextColor.YELLOW))
+                        .append(Component.space())
+                        .append(Component.text("by", NamedTextColor.GREEN))
+                        .append(Component.space())
+                        .append(profile.getFormattedName())
+                );
+            }
+        });
+    }
+
+    /**
+     * Joins a player to the guild
+     * @param player
+     * @param guild
+     */
+    @Children(names = "join", async = true, description = "Joins a guild")
+    public void handleJoin(Player joinee, @Param(name = "Player", wildcard = true) Player target) {
+        Profile joineeProfile = Universe.get(ProfileService.class).getProfile(joinee.getUniqueId());
+        Profile targetProfile = Universe.get(ProfileService.class).getProfile(target.getUniqueId());
+
+        // Check if either the joinee is already in a guild or if the target isn't
+        if (joineeProfile.getGuild() != null) {
+            joinee.sendMessage(Component.text("You are already in a guild", NamedTextColor.RED));
+            return;
+        }
+        if (targetProfile.getGuild() == null) {
+            joinee.sendMessage(Component.text("The player is not in a guild", NamedTextColor.RED));
+            return;
+        }
+
+        Guild guild = Universe.get(ProfileService.class).getProfile(target.getUniqueId()).getGuild();
+
+        // If the player already has an invite to the guild
+        if (guild.hasInvite(joinee.getUniqueId())) {
+
+            // Remove the joinee's pending invite and add them to the guild
+            guild.removeInvite(joinee.getUniqueId());
+            guild.addMember(joinee.getUniqueId());
+            joineeProfile.setGuildId(guild.getUuid());
+            Universe.get(ProfileService.class).saveProfile(joineeProfile);
+            Universe.get(GuildService.class).saveGuild(guild);
+            Universe.get(RedisService.class).publish(new GuildJoinPacket(guild.getUuid(), joinee.getUniqueId()));
+
+            // Broadcast to all the guild members that the joinee has joined
+            guild.getMembers().forEach((key, guildMember) -> {
+                Player p = Bukkit.getPlayer(guildMember.getPlayerId());
+                if (p != null) {
+                    p.sendMessage(Component.text()
+                            .append(Component.text("Player ", NamedTextColor.AQUA))
+                            .append(Component.text(joineeProfile.getUsername(), NamedTextColor.YELLOW))
+                            .append(Component.text(" has joined the guild", NamedTextColor.AQUA))
+                    );
+                }
+            });
+
+            return;
+        // If the target player's guild is already full
+        } else if (guild.getMembers().size() == 125) {
+            joinee.sendMessage(Component.text("The guild is full!", NamedTextColor.RED));
+            return;
+        // Otherwise send a request to join the guild
+        } else {
+            // Give the joinee a request packet and broadcast to all the guild members that they are requesting to join
+            Universe.get(RedisService.class).publish(new GuildJoinRequestPacket(guild.getUuid(), joinee.getUniqueId()));
+
+            guild.getMembers().forEach((key, guildMember) -> {
+                Player p = Bukkit.getPlayer(guildMember.getPlayerId());
+                if (p != null) {
+                    p.sendMessage(Component.text()
+                            .append(Component.text("Player ", NamedTextColor.AQUA))
+                            .append(Component.text(joineeProfile.getUsername(), NamedTextColor.YELLOW))
+                            .append(Component.text(" has requested to join the guild", NamedTextColor.AQUA))
+                    );
+                }
+            });
+        }
+    }
+
+    /**
+     * Accepts an invite to the guild
+     * @param player
+     * @param guild
+     */
+    @Children(names = "accept", async = true, description = "Accepts an invite to the guild")
+    public void handleAccept(Player invitor, @Param(name = "Player", wildcard = true) Player invitee) {
+        Guild guild = Universe.get(ProfileService.class).getProfile(invitor.getUniqueId()).getGuild();
+        Profile joineeProfile = Universe.get(ProfileService.class).getProfile(invitee.getUniqueId());
+
+        if (guild.hasInvite(invitee.getUniqueId())) {
+
+            guild.removeInvite(invitee.getUniqueId());
+            guild.addMember(invitee.getUniqueId());
+            joineeProfile.setGuildId(guild.getUuid());
+
+            Universe.get(GuildService.class).saveGuild(guild);
+            Universe.get(RedisService.class).publish(new GuildJoinPacket(guild.getUuid(), invitee.getUniqueId()));
+
+            // Broadcast to all the guild members that the joinee has joined
+            guild.getMembers().forEach((key, guildMember) -> {
+                Player p = Bukkit.getPlayer(guildMember.getPlayerId());
+                if (p != null) {
+                    p.sendMessage(Component.text()
+                            .append(Component.text("Player ", NamedTextColor.AQUA))
+                            .append(Component.text(joineeProfile.getUsername(), NamedTextColor.YELLOW))
+                            .append(Component.text(" has joined the guild", NamedTextColor.AQUA))
+                    );
+                }
+            });
+        } else {
+            invitor.sendMessage(Component.text("The player does not have an incoming invite request", NamedTextColor.RED));
+        }
+    }
+
+    /**
+     * Opens the guild menu
+     * @param player
+     */
+    @Children(names = "open", permission = "*", async = true, description = "Opens the guild menu")
+    public void handleOpen(Player player) {
+        if (Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild() == null) {
+            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            return;
+        }
+        Universe.get(MenuHandler.class).openMenuAsync(player, new GuildLandingPage(player));
+    }
+
+    /**
+     * Grabs the most relevent information of the guild
+     * @param player
+     * @param guild
+     */
+    @Children(names = "info", async = true, description = "Gets the info of the guild")
+    public void handleInfo(Player player) {
+
+        if (Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild() == null) {
+            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            return;
+        }
+
+        Guild guild = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild();
+        final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+
+        // Create a text component with the guild's information
+        Component text = Component.text()
+                .append(MenuUtils.chatSeparator())
+                .append(MenuUtils.centerSeparator(10, Component.text("\n" + guild.getName(), NamedTextColor.GOLD)))
+                .append(Component.text("\n"))
+                .append(Component.text("\nCreated: ", NamedTextColor.AQUA), Component.text(dateFormat.format(guild.getCreatedAt()), NamedTextColor.YELLOW))
+                .append(Component.text("\nDescription: ", NamedTextColor.AQUA), Component.text(guild.getDescription(), NamedTextColor.YELLOW))
+                .append(Component.text("\n"))
+                .append(Component.text("\nMembers: ", NamedTextColor.AQUA), Component.text(guild.getMembers().size(), NamedTextColor.YELLOW))
+                .append(Component.text("\nDiscord: ", NamedTextColor.AQUA), Component.text(guild.getDiscord(), NamedTextColor.YELLOW))
+                .append(Component.text("\n"),MenuUtils.chatSeparator())
+                .build();
+
+        // Send it to the player
+        player.sendMessage(text);
     }
 
     /**
@@ -219,7 +367,7 @@ public class GuildCommand {
      * @param target
      */
     @Children(names = "mute", async = true, description = "<Target/All> Mutes the chat for the guild")
-    public void handleMute(Player player, @Param(name = "Target") String target) {\
+    public void handleMute(Player player, @Param(name = "Target") String target) {
         // Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
 
@@ -546,5 +694,13 @@ public class GuildCommand {
         targetMember.setRole(nextRole);
         Universe.get(GuildService.class).saveGuild(guild);
         Universe.get(RedisService.class).publish(new GuildRolePacket(guild.getUuid(), player.getUniqueId(), target, true));
+    }
+
+    public void SendGuildMessage(Guild guild, Component message) {
+        Bukkit.getOnlinePlayers().forEach(p -> {
+            if (guild.isMember(p.getUniqueId())) {
+                p.sendMessage(message);
+            }
+        });
     }
 }

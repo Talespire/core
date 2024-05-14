@@ -23,14 +23,23 @@ import java.util.concurrent.TimeoutException;
 public class BukkitProfileUtils {
     public static void updatePlayerDisplay(Player player, Profile profile) {
         if (profile.getGuild() != null) {
-            player.playerListName(Component.text()
-                    .append(profile.getRank().getTabPrefix())
-                    .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
-                    .append(profile.getFormattedName())
-                    .append(Component.space())
-                    .append(Component.text("[" + profile.getGuild().getTag() + "]", profile.getGuild().getColor()))
-                    .build()
-            );
+            if (profile.getGuild().getTag() != null){
+                player.playerListName(Component.text()
+                        .append(profile.getRank().getTabPrefix())
+                        .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
+                        .append(profile.getFormattedName())
+                        .append(Component.space())
+                        .append(Component.text("[" + profile.getGuild().getTag() + "]", profile.getGuild().getColor()))
+                        .build()
+                );
+            } else {
+                player.playerListName(Component.text()
+                        .append(profile.getRank().getTabPrefix())
+                        .append(profile.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
+                        .append(profile.getFormattedName())
+                        .build()
+                );
+            }
         } else {
             player.playerListName(Component.text()
                     .append(profile.getRank().getTabPrefix())
