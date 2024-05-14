@@ -17,6 +17,7 @@ import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.menus.api.button.BackButton;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.social.guild.menus.conversation.InviteInputPrompt;
 import studio.talespire.core.social.guild.menus.conversation.TagInputPrompt;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
@@ -43,6 +44,8 @@ public class GuildSettings extends Menu {
         buttons.put(getSlot(3, 1), new GuildTagButton());
         buttons.put(getSlot(4, 1), new TagColorButton());
         buttons.put(getSlot(5, 1), new DescriptionButton());
+
+        buttons.put(getSlot(7, 1), new DiscordButton());
 
         buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true));
 
@@ -135,6 +138,57 @@ public class GuildSettings extends Menu {
         @Override
         public void clicked(Player player, ClickType clickType) {
             // Open a conversation to set the guild description
+        }
+    }
+
+    private static class MOTDButton extends Button {
+
+        @Override
+        public ItemStack getItem(Player player) {
+            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+
+            return new ItemBuilder(Material.WRITABLE_BOOK)
+                    .setName(ChatColor.GREEN + "Guild MOTD")
+                    .addLoreLine(ChatColor.GRAY + "Changes the message of the day for your guild.")
+                    .addLoreLine("")
+                    .addLoreLine(GuildPermission.MOTD.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild MOTD.")
+                    .toItemStack();
+        }
+
+        @Override
+        public void clicked(Player player, ClickType clickType) {
+            // Open a conversation to set the guild MOTD
+        }
+    }
+
+    private static class DiscordButton extends Button {
+
+        @Override
+        public ItemStack getItem(Player player) {
+            GuildRole role = Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild().getRole(player.getUniqueId());
+
+            return new ItemBuilder(Material.WRITABLE_BOOK)
+                    .setName(ChatColor.GREEN + "Guild Discord")
+                    .addLoreLine(ChatColor.GRAY + "Changes the Discord URL for your guild.")
+                    .addLoreLine("")
+                    .addLoreLine(GuildPermission.DISCORD.getDefaultRole() != role ? ChatColor.RED + "You do not have permission to change this!" : ChatColor.YELLOW + "Click to change the guild Discord URL.")
+                    .toItemStack();
+        }
+
+        @Override
+        public void clicked(Player player, ClickType clickType) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+            player.closeInventory();
+
+            Conversation conversation = new ConversationFactory(UniversePlugin.get())
+                    .withModality(true)
+                    .withPrefix(new NullConversationPrefix())
+                    .withLocalEcho(false)
+                    .withEscapeSequence("cancel")
+                    .withTimeout(60)
+                    .withFirstPrompt(new InviteInputPrompt(s -> new GuildSettings().openAsync(player)))
+                    .buildConversation(player);
+            player.beginConversation(conversation);
         }
     }
 }

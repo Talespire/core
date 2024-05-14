@@ -165,7 +165,9 @@ public class GuildLandingPage extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            // Open the discord link
+            player.closeInventory();
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+            player.sendMessage(ChatColor.GREEN + guild.getDiscord());
         }
     }
 

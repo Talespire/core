@@ -36,6 +36,7 @@ public class Guild {
     private UUID leader;
     private String name;
     private String description;
+    private String discord;
     private boolean mutechat;
     private Set<UUID> mutedPlayers;
     private String tag;

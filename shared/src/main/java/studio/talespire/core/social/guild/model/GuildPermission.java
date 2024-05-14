@@ -13,6 +13,7 @@ public enum GuildPermission {
     KICK(GuildRole.CAPTAIN),
     PROMOTE(GuildRole.LEADER),
     DESCRIPTION(GuildRole.LEADER),
+    DISCORD(GuildRole.CAPTAIN),
     MUTE(GuildRole.OFFICER),
     MUTE_ALL(GuildRole.CAPTAIN),
     TAG(GuildRole.CAPTAIN);
