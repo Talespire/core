@@ -112,12 +112,12 @@ public class GuildCommand {
                     Universe.get(ProfileService.class).saveProfile(memberProfile);
         });
 
+        SendGuildMessage(player, Component.text("You have disbanded the guild ", NamedTextColor.GREEN)
+                .append(Component.text(guild.getName(), NamedTextColor.YELLOW)));
+
         Universe.get(GuildService.class).deleteGuild(guild);
         Universe.get(ProfileService.class).saveProfile(profile);
         Universe.get(RedisService.class).publish(new GuildDeletePacket(guild.getUuid()));
-
-        SendGuildMessage(player, Component.text("You have disbanded the guild ", NamedTextColor.GREEN)
-                .append(Component.text(guild.getName(), NamedTextColor.YELLOW)));
     }
 
     /**
@@ -588,6 +588,13 @@ public class GuildCommand {
             );
             return;
         }
+
+        SendGuildMessage(guild,
+                Component.text(Bukkit.getPlayer(targetMember.getPlayerId()).getPlayerListName())
+                        .append(Component.text(" has been kicked by ", NamedTextColor.YELLOW))
+                        .append(Component.text(player.getPlayerListName()))
+        );
+
         guild.kickMember(player.getUniqueId(), target);
     }
 
@@ -646,7 +653,7 @@ public class GuildCommand {
         SendGuildMessage(guild,
                 Component.text(Bukkit.getPlayer(targetMember.getPlayerId()).getPlayerListName())
                         .append(Component.text(" has been promoted to ", NamedTextColor.YELLOW))
-                        .append(Component.text(targetMember.getRole().name(), NamedTextColor.YELLOW))
+                        .append(Component.text(targetMember.getRole().getNext().name(), NamedTextColor.YELLOW))
                         .append(Component.text(" by ", NamedTextColor.YELLOW))
                         .append(Component.text(player.getPlayerListName()))
         );
@@ -745,11 +752,17 @@ public class GuildCommand {
             );
             return;
         }
+        if (targetMember.getRole() == GuildRole.MEMBER) {
+            player.sendMessage(Component.text()
+                    .append(Component.text("This member is already at the lowest rank!", NamedTextColor.RED))
+            );
+            return;
+        }
 
         SendGuildMessage(guild,
             Component.text(Bukkit.getPlayer(targetMember.getPlayerId()).getPlayerListName())
                 .append(Component.text(" has been demoted to ", NamedTextColor.YELLOW))
-                .append(Component.text(targetMember.getRole().name(), NamedTextColor.YELLOW))
+                .append(Component.text(targetMember.getRole().getLast().name(), NamedTextColor.YELLOW))
                 .append(Component.text(" by ", NamedTextColor.YELLOW))
                 .append(Component.text(player.getPlayerListName()))
                 );

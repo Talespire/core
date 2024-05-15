@@ -132,9 +132,10 @@ public class Guild {
     }
 
     public void kickMember(UUID kicker, UUID kicked) {
+        removeMember(kicked);
+
         Universe.get(GuildService.class).saveGuild(this);
         Universe.get(RedisService.class).publish(new GuildKickPacket(this.uuid, kicker, kicked));
-
 
         Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(kicked);
         if(profile != null) {
