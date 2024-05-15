@@ -22,14 +22,14 @@ public class MenuUtils {
         return new String(new char[times]).replace("\0", string);
     }
 
-    public static Component separator(int times) {
+    public static Component separator(int times, TextColor color) {
         return DEFAULT_COMPONENT.append(
-                Component.text(repeat(" ", times), style(NamedTextColor.DARK_GRAY, TextDecoration.STRIKETHROUGH))
+                Component.text(repeat(" ", times), style(color, TextDecoration.STRIKETHROUGH))
         );
     }
 
-    public static Component chatSeparator() {
-        return separator(75);
+    public static Component chatSeparator(NamedTextColor color) {
+        return separator(75, color);
     }
     public static Component centerSeparator(int index, Component component) {
         int textLength = LegacyComponentSerializer.legacySection().serialize(component).length();
@@ -42,14 +42,14 @@ public class MenuUtils {
         if ((int)textHalfLength == textHalfLength) {
             diff = 1;
         }
-        return separator(halfLength).append(component).append(separator(halfLength + diff));
+        return separator(halfLength, NamedTextColor.GRAY).append(component).append(separator(halfLength + diff, NamedTextColor.GRAY));
     }
     public static Component menuSeparator() {
-        return separator(50);
+        return separator(50, NamedTextColor.GRAY);
     }
 
     public static Component scoreboardSeparator() {
-        return separator(32);
+        return separator(32, NamedTextColor.GRAY);
     }
     public static Style style(TextColor color, TextDecoration... decorations) {
         return Style.style(color, decorations).decoration(TextDecoration.ITALIC, false);

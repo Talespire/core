@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -81,9 +80,9 @@ public class GuildLandingPage extends Menu {
                 break;
             }
 
-            UUID playerUUID = members.keySet().toArray(new UUID[0])[i];
+            studio.talespire.core.profile.Profile profile = Universe.get(ProfileService.class).getProfile(members.keySet().toArray(new UUID[0])[i]);
 
-            buttons.put(getSlot(i + 1, 3), new MemberButton(Bukkit.getPlayer(playerUUID)));
+            buttons.put(getSlot(i + 1, 3), new MemberButton(profile));
         }
 
         return buttons;
@@ -190,27 +189,27 @@ public class GuildLandingPage extends Menu {
     @RequiredArgsConstructor
     private static class MemberButton extends Button {
 
-        private final Player desiredPlayer;
+        private final studio.talespire.core.profile.Profile desiredPlayer;
 
         private final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
 
         @Override
         public ItemStack getItem(Player player) {
 
-            Component component = BukkitProfileUtils.getFormatedName(desiredPlayer.getUniqueId());
+            Component component = BukkitProfileUtils.getFormatedName(desiredPlayer.getUuid());
             TextComponent nameComponent = Component.text()
-                    .append(Universe.get(ProfileService.class).getProfile(desiredPlayer.getUniqueId()).getRank().getTabPrefix())
-                    .append(Universe.get(ProfileService.class).getProfile(desiredPlayer.getUniqueId()).getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
+                    .append(desiredPlayer.getRank().getTabPrefix())
+                    .append(desiredPlayer.getRank() == Rank.DEFAULT ? Component.empty() : Component.space())
                     .append(component)
                     .build();
 
             return new ItemBuilder(Material.PLAYER_HEAD)
-                    .setSkullOwner(desiredPlayer.getName())
+                    .setSkullOwner(desiredPlayer.getUsername())
                     .setName(ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(nameComponent)))
-                    .addLoreLine(ChatColor.GRAY + "Level: " + ChatColor.GOLD + Profile.getInstance().getProfileHandler().getProfile(desiredPlayer.getUniqueId()).getCharacters().get(0).getLevel())
-                    .addLoreLine(ChatColor.GRAY + "Rank: " + ChatColor.AQUA + guild.getRole(desiredPlayer.getUniqueId()).name().toLowerCase().replaceFirst(
-                            "^[a-z]", String.valueOf(Character.toUpperCase(guild.getRole(desiredPlayer.getUniqueId()).name().charAt(0)))))
-                    .addLoreLine(ChatColor.GRAY + "Member since: " + ChatColor.AQUA + dateFormat.format(guild.getMember(desiredPlayer.getUniqueId()).getJoinedAt()))
+                    .addLoreLine(ChatColor.GRAY + "Level: " + ChatColor.GOLD + Profile.getInstance().getProfileHandler().getProfile(desiredPlayer.getUuid()).getCharacters().get(0).getLevel())
+                    .addLoreLine(ChatColor.GRAY + "Rank: " + ChatColor.AQUA + guild.getRole(desiredPlayer.getUuid()).name().toLowerCase().replaceFirst(
+                            "^[a-z]", String.valueOf(Character.toUpperCase(guild.getRole(desiredPlayer.getUuid()).name().charAt(0)))))
+                    .addLoreLine(ChatColor.GRAY + "Member since: " + ChatColor.AQUA + dateFormat.format(guild.getMember(desiredPlayer.getUuid()).getJoinedAt()))
                     .toItemStack();
 
         }

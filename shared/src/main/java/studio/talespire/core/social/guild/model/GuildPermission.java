@@ -12,6 +12,7 @@ public enum GuildPermission {
     INVITE(GuildRole.CAPTAIN),
     KICK(GuildRole.CAPTAIN),
     PROMOTE(GuildRole.LEADER),
+    DEMOTE(GuildRole.LEADER),
     DESCRIPTION(GuildRole.LEADER),
     DISCORD(GuildRole.CAPTAIN),
     MUTE(GuildRole.OFFICER),

@@ -29,6 +29,7 @@ public class Guild {
     private final long createdAt;
     private final Map<UUID, GuildMember> members = new HashMap<>();
     private final Map<UUID, GuildInvite> invites = new HashMap<>();
+    private final List<UUID> requests = new ArrayList<>();
     private final Map<GuildPermission, GuildRole> permissions = new HashMap<>();
     private final List<String> motd = new ArrayList<>();
 
@@ -71,6 +72,10 @@ public class Guild {
         this.members.put(playerId, new GuildMember(playerId, System.currentTimeMillis(), GuildRole.MEMBER));
     }
 
+    public void removeMember(UUID playerId) {
+        this.members.remove(playerId);
+    }
+
     public void setRole(UUID playerId, GuildRole role) {
         if (!members.containsKey(playerId)) {
             return;
@@ -106,8 +111,16 @@ public class Guild {
         return this.invites.containsKey(invite);
     }
 
+    public boolean hasRequest(UUID request) {
+        return this.requests.contains(request);
+    }
+
     public void removeInvite(UUID invite) {
         this.invites.remove(invite);
+    }
+
+    public void removeRequest(UUID request) {
+        this.requests.remove(request);
     }
 
     public GuildInvite getInvite(UUID invite) {
