@@ -180,7 +180,7 @@ public class GuildCommand {
                 .append(Component.newline())
                 .append(
                         Component.text("Click Here", NamedTextColor.AQUA, TextDecoration.BOLD)
-                                .clickEvent(ClickEvent.runCommand(("/guild join " + target.getName())))
+                                .clickEvent(ClickEvent.runCommand(("/guild join " + invitor.getName())))
                         )
                 .append(Component.text(" or type ", NamedTextColor.GREEN))
                 .append(Component.text("/guild join " + invitor.getName(), NamedTextColor.AQUA))
@@ -239,6 +239,8 @@ public class GuildCommand {
         } else {
             // Give the joinee a request packet and broadcast to all the guild members that they are requesting to join
             Universe.get(RedisService.class).publish(new GuildJoinRequestPacket(guild.getUuid(), joinee.getUniqueId()));
+
+            guild.addRequest(joinee.getUniqueId());
 
             SendGuildMessage(guild,
                 Component.text()
@@ -339,7 +341,7 @@ public class GuildCommand {
                             .build()
             );
         } else {
-            invitor.sendMessage(Component.text("The player does not have an incoming invite request", NamedTextColor.RED));
+            invitor.sendMessage(Component.text("this player does not have an incoming invite request", NamedTextColor.RED));
         }
     }
 
@@ -584,7 +586,7 @@ public class GuildCommand {
         }
         if (member.getRole().ordinal() <= targetMember.getRole().ordinal()) {
             player.sendMessage(Component.text()
-                    .append(Component.text("You do cannot kick someone with a higher or the same role as you", NamedTextColor.RED))
+                    .append(Component.text("You cannot kick someone with a higher or the same role as you", NamedTextColor.RED))
             );
             return;
         }
@@ -638,14 +640,14 @@ public class GuildCommand {
         }
         if (member.getRole().ordinal() <= targetMember.getRole().ordinal()) {
             player.sendMessage(Component.text()
-                    .append(Component.text("You do cannot promote someone with a higher or the same role as you", NamedTextColor.RED))
+                    .append(Component.text("You cannot promote someone with a higher or the same role as you", NamedTextColor.RED))
             );
             return;
         }
         GuildRole nextRole = targetMember.getRole().getNext();
         if (nextRole == GuildRole.LEADER) {
             player.sendMessage(Component.text()
-                    .append(Component.text("You do cannot promote someone to leader.", NamedTextColor.RED))
+                    .append(Component.text("You cannot promote someone to leader.", NamedTextColor.RED))
             );
             return;
         }
@@ -748,7 +750,7 @@ public class GuildCommand {
         }
         if (member.getRole().ordinal() <= targetMember.getRole().ordinal()) {
             player.sendMessage(Component.text()
-                    .append(Component.text("You do cannot demote someone with a higher or the same role as you", NamedTextColor.RED))
+                    .append(Component.text("You cannot demote someone with a higher or the same role as you", NamedTextColor.RED))
             );
             return;
         }

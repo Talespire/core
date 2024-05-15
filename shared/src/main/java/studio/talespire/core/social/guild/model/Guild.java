@@ -72,6 +72,10 @@ public class Guild {
         this.members.put(playerId, new GuildMember(playerId, System.currentTimeMillis(), GuildRole.MEMBER));
     }
 
+    public void addRequest(UUID playerId) {
+        this.requests.add(playerId);
+    }
+
     public void removeMember(UUID playerId) {
         this.members.remove(playerId);
     }
