@@ -26,6 +26,7 @@ import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.social.guild.menus.conversation.DiscordInputPrompt;
 import studio.talespire.core.social.guild.menus.conversation.InviteInputPrompt;
+import studio.talespire.core.social.guild.menus.conversation.MOTDChat;
 import studio.talespire.core.social.guild.menus.conversation.TagInputPrompt;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
@@ -52,7 +53,7 @@ public class GuildSettings extends Menu {
         buttons.put(getSlot(2, 1), new GuildTagButton());
         buttons.put(getSlot(3, 1), new TagColorButton());
         buttons.put(getSlot(4, 1), new DescriptionButton());
-
+        buttons.put(getSlot(5, 1), new MOTDButton());
         buttons.put(getSlot(6, 1), new DiscordButton());
 
         buttons.put(getSlot(4, 2), new BackButton(new GuildLandingPage(player), true, true));
@@ -168,9 +169,8 @@ public class GuildSettings extends Menu {
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
             player.closeInventory();
 
-            //TODO: Open a conversation to set the guild MOTD
-
-            // Open a conversation to set the guild MOTD
+            MOTDChat motdChat = new MOTDChat(Universe.get(ProfileService.class).getProfile(player.getUniqueId()).getGuild(), player);
+            motdChat.displayCurrentMOTD();
         }
     }
 

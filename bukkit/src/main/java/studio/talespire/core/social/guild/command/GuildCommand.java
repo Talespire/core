@@ -4,24 +4,20 @@ import me.andyreckt.raspberry.annotation.Children;
 import me.andyreckt.raspberry.annotation.Command;
 import me.andyreckt.raspberry.annotation.Param;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.menus.api.MenuHandler;
-import studio.lunarlabs.universe.util.Statics;
 import studio.lunarlabs.universe.uuid.UUIDCache;
 import studio.talespire.core.CorePlugin;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
 import studio.talespire.core.social.guild.GuildService;
-import studio.talespire.core.social.guild.command.param.GuildParameter;
 import studio.talespire.core.social.guild.menus.GuildLandingPage;
 import studio.talespire.core.social.guild.menus.GuildSettings;
 import studio.talespire.core.social.guild.model.Guild;
@@ -29,7 +25,6 @@ import studio.talespire.core.social.guild.model.GuildMember;
 import studio.talespire.core.social.guild.model.GuildPermission;
 import studio.talespire.core.social.guild.model.GuildRole;
 import studio.talespire.core.social.guild.packet.*;
-import studio.talespire.core.utils.BukkitUtils;
 import studio.talespire.core.utils.MenuUtils;
 
 import java.text.DateFormat;
@@ -49,6 +44,7 @@ public class GuildCommand {
 
     /**
      * Creates a new guild
+     *
      * @param player
      * @param name
      */
@@ -84,6 +80,7 @@ public class GuildCommand {
 
     /**
      * Disbands the guild
+     *
      * @param player
      */
     @Children(names = "disband", permission = "hero", async = true, description = "Disbands the guild")
@@ -107,9 +104,9 @@ public class GuildCommand {
         SendGuildMessage(guild, Component.text("The guild has been disbanded", NamedTextColor.RED));
 
         guild.getMembers().forEach((key, guildMember) -> {
-                    Profile memberProfile = Universe.get(ProfileService.class).getProfile(guildMember.getPlayerId());
-                    memberProfile.setGuildId(null);
-                    Universe.get(ProfileService.class).saveProfile(memberProfile);
+            Profile memberProfile = Universe.get(ProfileService.class).getProfile(guildMember.getPlayerId());
+            memberProfile.setGuildId(null);
+            Universe.get(ProfileService.class).saveProfile(memberProfile);
         });
 
         SendGuildMessage(player, Component.text("You have disbanded the guild ", NamedTextColor.GREEN)
@@ -122,6 +119,7 @@ public class GuildCommand {
 
     /**
      * Invites a player to the guild
+     *
      * @param player
      * @param targetId
      */
@@ -181,7 +179,7 @@ public class GuildCommand {
                 .append(
                         Component.text("Click Here", NamedTextColor.AQUA, TextDecoration.BOLD)
                                 .clickEvent(ClickEvent.runCommand(("/guild join " + invitor.getName())))
-                        )
+                )
                 .append(Component.text(" or type ", NamedTextColor.GREEN))
                 .append(Component.text("/guild join " + invitor.getName(), NamedTextColor.AQUA))
                 .append(Component.text(" to accept their request!", NamedTextColor.GREEN))
@@ -190,6 +188,7 @@ public class GuildCommand {
 
     /**
      * Joins a player to the guild
+     *
      * @param player
      * @param guild
      */
@@ -224,18 +223,18 @@ public class GuildCommand {
 
             // Broadcast to all the guild members that the joinee has joined
             SendGuildMessage(guild,
-                Component.text()
-                    .append(Component.text(joinee.getPlayerListName()))
-                    .append(Component.text(" has joined the guild!", NamedTextColor.YELLOW))
-                    .build()
+                    Component.text()
+                            .append(Component.text(joinee.getPlayerListName()))
+                            .append(Component.text(" has joined the guild!", NamedTextColor.YELLOW))
+                            .build()
             );
 
             return;
-        // If the target player's guild is already full
+            // If the target player's guild is already full
         } else if (guild.getMembers().size() == 125) {
             joinee.sendMessage(Component.text("The guild is full!", NamedTextColor.RED));
             return;
-        // Otherwise send a request to join the guild
+            // Otherwise send a request to join the guild
         } else {
             // Give the joinee a request packet and broadcast to all the guild members that they are requesting to join
             Universe.get(RedisService.class).publish(new GuildJoinRequestPacket(guild.getUuid(), joinee.getUniqueId()));
@@ -243,18 +242,18 @@ public class GuildCommand {
             guild.addRequest(joinee.getUniqueId());
 
             SendGuildMessage(guild,
-                Component.text()
-                    .append(Component.text(joinee.getPlayerListName()))
-                    .append(Component.text(" has requested to join the Guild!", NamedTextColor.GREEN))
-                        .append(Component.newline())
-                        .append(
-                                Component.text("Click Here", NamedTextColor.AQUA, TextDecoration.BOLD)
-                                        .clickEvent(ClickEvent.runCommand(("/guild accept " + joinee.getName())))
-                        )
-                    .append(Component.text(" or type ", NamedTextColor.GREEN))
-                    .append(Component.text("/guild accept " + joinee.getName(), NamedTextColor.AQUA))
-                    .append(Component.text(" to accept their request!", NamedTextColor.GREEN))
-                    .build()
+                    Component.text()
+                            .append(Component.text(joinee.getPlayerListName()))
+                            .append(Component.text(" has requested to join the Guild!", NamedTextColor.GREEN))
+                            .append(Component.newline())
+                            .append(
+                                    Component.text("Click Here", NamedTextColor.AQUA, TextDecoration.BOLD)
+                                            .clickEvent(ClickEvent.runCommand(("/guild accept " + joinee.getName())))
+                            )
+                            .append(Component.text(" or type ", NamedTextColor.GREEN))
+                            .append(Component.text("/guild accept " + joinee.getName(), NamedTextColor.AQUA))
+                            .append(Component.text(" to accept their request!", NamedTextColor.GREEN))
+                            .build()
             );
 
             SendGuildMessage(joinee, Component.text("You have requested to join the guild", NamedTextColor.GREEN));
@@ -263,6 +262,7 @@ public class GuildCommand {
 
     /**
      * Leaves the guild
+     *
      * @param player
      */
     @Children(names = "leave", async = true, description = "Leaves the guild")
@@ -279,7 +279,7 @@ public class GuildCommand {
         if (guild.getLeader().equals(player.getUniqueId())) {
             player.sendMessage(Component.text("You cannot leave the guild as the leader", NamedTextColor.RED));
             return;
-        // Otherwise remove the player from the guild
+            // Otherwise remove the player from the guild
         } else {
             guild.removeMember(player.getUniqueId());
             profile.setGuildId(null);
@@ -289,10 +289,10 @@ public class GuildCommand {
 
             // Broadcast to all the guild members that the player has left
             SendGuildMessage(guild,
-                Component.text()
-                    .append(Component.text(player.getPlayerListName()))
-                    .append(Component.text(" has left the guild!", NamedTextColor.YELLOW))
-                    .build()
+                    Component.text()
+                            .append(Component.text(player.getPlayerListName()))
+                            .append(Component.text(" has left the guild!", NamedTextColor.YELLOW))
+                            .build()
             );
         }
 
@@ -300,6 +300,7 @@ public class GuildCommand {
 
     /**
      * Accepts an invite to the guild
+     *
      * @param player
      * @param guild
      */
@@ -347,6 +348,7 @@ public class GuildCommand {
 
     /**
      * Opens the guild menu
+     *
      * @param player
      */
     @Children(names = "open", permission = "*", async = true, description = "Opens the guild menu")
@@ -361,6 +363,7 @@ public class GuildCommand {
 
     /**
      * Grabs the most relevent information of the guild
+     *
      * @param player
      * @param guild
      */
@@ -386,7 +389,7 @@ public class GuildCommand {
                 .append(Component.newline())
                 .append(Component.text("\nMembers: ", NamedTextColor.AQUA), Component.text(guild.getMembers().size(), NamedTextColor.YELLOW))
                 .append(Component.text("\nDiscord: ", NamedTextColor.AQUA), Component.text(guild.getDiscord(), NamedTextColor.YELLOW))
-                .append(Component.text("\n"),MenuUtils.chatSeparator(NamedTextColor.AQUA))
+                .append(Component.text("\n"), MenuUtils.chatSeparator(NamedTextColor.AQUA))
                 .build();
 
         // Send it to the player
@@ -394,7 +397,8 @@ public class GuildCommand {
     }
 
     /**
-     *  Opens the Settings menu for that player
+     * Opens the Settings menu for that player
+     *
      * @param player
      */
     @Children(names = "settings", async = true, description = "Opens your current guild's settings")
@@ -415,6 +419,7 @@ public class GuildCommand {
 
     /**
      * Mutes a player and prevents them from being able to speak in guild chat
+     *
      * @param player
      * @param target
      */
@@ -497,6 +502,7 @@ public class GuildCommand {
 
     /**
      * Allows the user to set the guild's description
+     *
      * @param player
      * @param description
      */
@@ -762,12 +768,12 @@ public class GuildCommand {
         }
 
         SendGuildMessage(guild,
-            Component.text(Bukkit.getPlayer(targetMember.getPlayerId()).getPlayerListName())
-                .append(Component.text(" has been demoted to ", NamedTextColor.YELLOW))
-                .append(Component.text(targetMember.getRole().getLast().name(), NamedTextColor.YELLOW))
-                .append(Component.text(" by ", NamedTextColor.YELLOW))
-                .append(Component.text(player.getPlayerListName()))
-                );
+                Component.text(Bukkit.getPlayer(targetMember.getPlayerId()).getPlayerListName())
+                        .append(Component.text(" has been demoted to ", NamedTextColor.YELLOW))
+                        .append(Component.text(targetMember.getRole().getLast().name(), NamedTextColor.YELLOW))
+                        .append(Component.text(" by ", NamedTextColor.YELLOW))
+                        .append(Component.text(player.getPlayerListName()))
+        );
 
         GuildRole lastRole = targetMember.getRole().getLast();
         targetMember.setRole(lastRole);
@@ -775,12 +781,30 @@ public class GuildCommand {
         Universe.get(RedisService.class).publish(new GuildRolePacket(guild.getUuid(), player.getUniqueId(), target, true));
     }
 
+    @Children(names = "motd", async = true, description = "Previews the guild's message of the day")
+    public void handleMotd(Player player) {
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        if (profile.getGuild() == null) {
+            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            return;
+        }
+
+        Guild guild = profile.getGuild();
+        player.sendMessage(MenuUtils.chatSeparator(NamedTextColor.AQUA));
+        for (String line : guild.getMotd()) {
+            player.sendMessage(Component.text(line, NamedTextColor.YELLOW));
+        }
+        player.sendMessage(MenuUtils.chatSeparator(NamedTextColor.AQUA));
+    }
+
     /**
      * Use if you want to send a message to all guild members
+     *
      * @param guild
      * @param message
      */
-    public void SendGuildMessage(Guild guild, Component message) {
+    public static void SendGuildMessage(Guild guild, Component message) {
         Component toSend = Component.text()
                 .append(MenuUtils.chatSeparator(NamedTextColor.AQUA))
                 .append(Component.newline())
@@ -797,10 +821,11 @@ public class GuildCommand {
 
     /**
      * Use if you want to send a guild formatted message to a single player
+     *
      * @param player
      * @param message
      */
-    public void SendGuildMessage(Player player, Component message) {
+    public static void SendGuildMessage(Player player, Component message) {
         Component toSend = Component.text()
                 .append(MenuUtils.chatSeparator(NamedTextColor.AQUA))
                 .append(Component.newline())
