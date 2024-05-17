@@ -10,6 +10,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.chat.ChatChannelService;
+import studio.lunarlabs.universe.chat.model.ChatChannel;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.uuid.UUIDCache;
@@ -17,7 +19,9 @@ import studio.talespire.core.CorePlugin;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
+import studio.talespire.core.social.guild.BukkitGuildService;
 import studio.talespire.core.social.guild.GuildService;
+import studio.talespire.core.social.guild.chat.GuildChatChannel;
 import studio.talespire.core.social.guild.menus.GuildLandingPage;
 import studio.talespire.core.social.guild.menus.GuildSettings;
 import studio.talespire.core.social.guild.model.Guild;
@@ -796,6 +800,23 @@ public class GuildCommand {
             player.sendMessage(Component.text(line, NamedTextColor.YELLOW));
         }
         player.sendMessage(MenuUtils.chatSeparator(NamedTextColor.AQUA));
+    }
+    @Children(names = "chat", async = true, description = "Send a message to your guild chat")
+    public void handleChat(Player player, @Param(name = "Message", wildcard = true,baseValue = "GUILD_CHAT_TOGGLE_41901423") String message) {
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        if (profile.getGuild() == null) {
+            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+            return;
+        }
+
+        GuildChatChannel channel = Universe.get(BukkitGuildService.class).getChannel();
+        if(message.equals("GUILD_CHAT_TOGGLE_41901423")) {
+            Universe.get(ChatChannelService.class).setChatChannel(player, channel);
+            return;
+        }
+        channel.sendMessage(player, Component.text(message));
+
     }
 
     /**

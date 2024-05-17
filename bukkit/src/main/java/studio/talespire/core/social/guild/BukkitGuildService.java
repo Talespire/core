@@ -1,5 +1,6 @@
 package studio.talespire.core.social.guild;
 
+import lombok.Getter;
 import me.andyreckt.raspberry.RaspberryPaper;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
@@ -18,13 +19,14 @@ import studio.talespire.core.social.guild.model.Guild;
  * @author Moose1301
  * @date 5/5/2024
  */
+@Getter
 public class BukkitGuildService {
-
+    private final GuildChatChannel channel = new GuildChatChannel();
 
     public BukkitGuildService(JavaPlugin plugin) {
         Universe.get(RaspberryPaper.class).getCommandHandler().registerTypeAdapter(Guild.class, new GuildParameter());
         CommandUtil.registerAll(new GuildCommand());
         Universe.get(RedisService.class).registerListener(new GuildPacketListener());
-        Universe.get(ChatChannelService.class).registerChatChannel(new GuildChatChannel());
+        Universe.get(ChatChannelService.class).registerChatChannel(channel);
     }
 }
