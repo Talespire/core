@@ -13,6 +13,7 @@ dependencies {
     compileOnly("studio.talespire.universe:universe-shared:0.0.1")
 
     compileOnly("net.kyori:adventure-api:4.16.0")
+    compileOnly("net.kyori:adventure-text-serializer-gson:4.16.0")
 
     compileOnly 'io.projectreactor:reactor-core:3.6.4'
     compileOnly "redis.clients:jedis:5.1.2"
