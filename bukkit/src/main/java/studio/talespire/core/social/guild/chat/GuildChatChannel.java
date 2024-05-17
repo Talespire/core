@@ -2,6 +2,7 @@ package studio.talespire.core.social.guild.chat;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
@@ -11,6 +12,7 @@ import studio.lunarlabs.universe.chat.model.ChatChannel;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.social.guild.GuildService;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.packet.GuildChatPacket;
@@ -48,7 +50,26 @@ public class GuildChatChannel extends ChatChannel {
 
     @Override
     public ComponentLike formatMessage(Player player, Component component) {
-        return null;
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+        if(profile == null || profile.getGuild() == null) {
+            return component;
+        }
+        Guild guild = Universe.get(GuildService.class).getGuild(profile.getGuildId());
+        if(guild == null) {
+            return component;
+        }
+
+        Component toSend = Component.text("Guild » ", NamedTextColor.DARK_GREEN)
+                .append(BukkitProfileUtils.getRankedNameLoaded(player.getUniqueId())
+                        .appendSpace()
+                        .append(Component.text("[", guild.getColor()))
+                        .append(Component.text(guild.getMember(player.getUniqueId()).getRole().name(), guild.getColor()))
+                        .append(Component.text("] ", guild.getColor()))
+                        .appendSpace()
+                        .append(Component.text(": ", NamedTextColor.WHITE))
+                        .append(component.color(NamedTextColor.WHITE)));
+
+        return toSend;
     }
 
     @Override

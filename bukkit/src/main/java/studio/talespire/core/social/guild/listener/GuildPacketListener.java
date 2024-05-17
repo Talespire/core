@@ -13,6 +13,8 @@ import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.packet.*;
 
+import java.util.UUID;
+
 /**
  * @author Moose1301
  * @date 5/7/2024
@@ -29,8 +31,9 @@ public class GuildPacketListener implements RPacketListener {
     public void onGuildChat(GuildChatPacket packet) {
 
         Guild guild = Universe.get(ProfileService.class).getProfile(packet.getSenderId()).getGuild();
-        Player player = Bukkit.getPlayer(packet.getSenderId());
-
+        if(guild == null) {
+            return;
+        }
         Component toSend = Component.text("Guild » ", NamedTextColor.DARK_GREEN)
             .append(BukkitProfileUtils.getRankedNameLoaded(packet.getSenderId())
             .appendSpace()
@@ -39,8 +42,12 @@ public class GuildPacketListener implements RPacketListener {
                     .append(Component.text("] ", guild.getColor()))
             .appendSpace()
                     .append(Component.text(": ", NamedTextColor.WHITE))
-            .append(Component.text(packet.getMessage(), NamedTextColor.WHITE)));
-
+            .append(packet.getFormattedMessage().color(NamedTextColor.WHITE)));
+        for (UUID uuid : guild.getMembers().keySet()) {
+            Player onlnePlayer = Bukkit.getPlayer(uuid);
+            if(onlnePlayer == null) continue;
+            onlnePlayer.sendMessage(toSend);
+        }
     }
 
 
