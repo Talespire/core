@@ -801,23 +801,23 @@ public class GuildCommand {
         }
         player.sendMessage(MenuUtils.chatSeparator(NamedTextColor.AQUA));
     }
-    @Children(names = "chat", async = true, description = "Send a message to your guild chat")
-    public void handleChat(Player player, @Param(name = "Message", wildcard = true,baseValue = "GUILD_CHAT_TOGGLE_41901423") String message) {
-        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
-
-        if (profile.getGuild() == null) {
-            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
-            return;
-        }
-
-        GuildChatChannel channel = Universe.get(BukkitGuildService.class).getChannel();
-        if(message.equals("GUILD_CHAT_TOGGLE_41901423")) {
-            Universe.get(ChatChannelService.class).setChatChannel(player, channel);
-            return;
-        }
-        channel.sendMessage(player, Component.text(message));
-
-    }
+//    @Children(names = "chat", async = true, description = "Send a message to your guild chat")
+//    public void handleChat(Player player, @Param(name = "Message", wildcard = true,baseValue = "GUILD_CHAT_TOGGLE_41901423") String message) {
+//        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+//
+//        if (profile.getGuild() == null) {
+//            player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
+//            return;
+//        }
+//
+//        GuildChatChannel channel = Universe.get(BukkitGuildService.class).getChannel();
+//        if(message.equals("GUILD_CHAT_TOGGLE_41901423")) {
+//            Universe.get(ChatChannelService.class).setChatChannel(player, channel);
+//            return;
+//        }
+//        channel.sendMessage(player, Component.text(message));
+//
+//    }
 
     /**
      * Use if you want to send a message to all guild members
