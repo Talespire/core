@@ -27,5 +27,8 @@ public class BukkitGuildService {
         Universe.get(RaspberryPaper.class).getCommandHandler().registerTypeAdapter(Guild.class, new GuildParameter());
         Universe.get(RedisService.class).registerListener(new GuildPacketListener());
         Universe.get(ChatChannelService.class).registerChatChannel(channel);
+        CommandUtil.registerAll(
+                new GuildCommand()
+        );
     }
 }
