@@ -23,7 +23,7 @@ public class JoinMessageListener implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
 
-        Component leaveMessage = BukkitProfileUtils.getRankedNameLoaded(event.getPlayer().getUniqueId())
+        Component leaveMessage = BukkitProfileUtils.getRankedName(event.getPlayer().getUniqueId())
                         .append(Component.text(" left!", NamedTextColor.GOLD));
 
         event.quitMessage(leaveMessage);
