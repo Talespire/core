@@ -24,10 +24,7 @@ import studio.lunarlabs.universe.menus.api.MenuHandler;
 import studio.lunarlabs.universe.menus.api.button.BackButton;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
-import studio.talespire.core.social.guild.menus.conversation.DiscordInputPrompt;
-import studio.talespire.core.social.guild.menus.conversation.InviteInputPrompt;
-import studio.talespire.core.social.guild.menus.conversation.MOTDChat;
-import studio.talespire.core.social.guild.menus.conversation.TagInputPrompt;
+import studio.talespire.core.social.guild.menus.conversation.*;
 import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.model.GuildPermission;
 import studio.talespire.core.social.guild.model.GuildRole;
@@ -146,7 +143,19 @@ public class GuildSettings extends Menu {
 
         @Override
         public void clicked(Player player, ClickType clickType) {
-            //TODO: Open a conversation to set the guild description
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 20f, 0.1f);
+            player.closeInventory();
+
+            Conversation conversation = new ConversationFactory(UniversePlugin.get())
+                    .withModality(true)
+                    .withPrefix(new NullConversationPrefix())
+                    .withLocalEcho(false)
+                    .withEscapeSequence("cancel")
+                    .withTimeout(60)
+                    .withFirstPrompt(new DescriptionInputPrompt(s -> new GuildSettings().openAsync(player)))
+                    .buildConversation(player);
+
+            player.beginConversation(conversation);
         }
     }
 

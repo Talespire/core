@@ -18,6 +18,7 @@ import studio.lunarlabs.universe.UniversePlugin;
 import studio.lunarlabs.universe.menus.api.Button;
 import studio.lunarlabs.universe.menus.api.Menu;
 import studio.lunarlabs.universe.menus.api.MenuHandler;
+import studio.lunarlabs.universe.menus.api.pagination.PaginatedMenu;
 import studio.lunarlabs.universe.util.ItemBuilder;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
@@ -72,19 +73,20 @@ public class GuildLandingPage extends Menu {
             });
         }
 
-        // TODO: Pagination
-        // Temporary solution until we fix pagination
-        Map<UUID, GuildMember> members = guild.getMembers();
-        for (int i = 0; i < 8; i++) {
-            if (members.size()-1 < i) {
-                break;
+        int slot = 1;
+        int row = 3;
+
+        for (GuildMember member : guild.getMembers().values()) {
+
+            studio.talespire.core.profile.Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(member.getPlayerId());
+            buttons.put(getSlot(slot, row), new MemberButton(profile));
+
+            if (slot == 8) {
+                slot = 0;
+                row++;
             }
-
-            studio.talespire.core.profile.Profile profile = Universe.get(ProfileService.class).getProfile(members.keySet().toArray(new UUID[0])[i]);
-
-            buttons.put(getSlot(i + 1, 3), new MemberButton(profile));
+            slot++;
         }
-
         return buttons;
     }
 
@@ -192,7 +194,6 @@ public class GuildLandingPage extends Menu {
         private final studio.talespire.core.profile.Profile desiredPlayer;
 
         private final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-
         @Override
         public ItemStack getItem(Player player) {
 
@@ -206,7 +207,7 @@ public class GuildLandingPage extends Menu {
             return new ItemBuilder(Material.PLAYER_HEAD)
                     .setSkullOwner(desiredPlayer.getUsername())
                     .setName(ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(nameComponent)))
-                    .addLoreLine(ChatColor.GRAY + "Level: " + ChatColor.GOLD + Profile.getInstance().getProfileHandler().getProfile(desiredPlayer.getUuid()).getCharacters().get(0).getLevel())
+                    .addLoreLine(ChatColor.GRAY + "Level: " + ChatColor.GOLD + Profile.getInstance().getProfileHandler().getProfile(desiredPlayer.getUuid()).getSelectedCharacter().getLevel())
                     .addLoreLine(ChatColor.GRAY + "Rank: " + ChatColor.AQUA + guild.getRole(desiredPlayer.getUuid()).name().toLowerCase().replaceFirst(
                             "^[a-z]", String.valueOf(Character.toUpperCase(guild.getRole(desiredPlayer.getUuid()).name().charAt(0)))))
                     .addLoreLine(ChatColor.GRAY + "Member since: " + ChatColor.AQUA + dateFormat.format(guild.getMember(desiredPlayer.getUuid()).getJoinedAt()))

@@ -2,11 +2,10 @@ package studio.talespire.core.profile.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.uuid.UUIDCache;
-import studio.lunarlabs.universe.uuid.UUIDCacheService;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.rank.Rank;
@@ -65,5 +64,16 @@ public class BukkitProfileUtils {
             displayName = playerId.toString();
         }
         return Component.text(displayName, NamedTextColor.WHITE);
+    }
+
+    public static Component getRankedNameLoaded(UUID playerId) {
+        Component toReturn = Component.text()
+                .append(Universe.get(ProfileService.class).getProfile(playerId).getRank().getTabPrefix())
+                .append(Component.space())
+                .append(getFormatedName(playerId))
+                .build();
+
+
+        return toReturn;
     }
 }

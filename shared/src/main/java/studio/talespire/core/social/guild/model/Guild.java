@@ -33,10 +33,9 @@ public class Guild {
     private final Map<GuildPermission, GuildRole> permissions = new HashMap<>();
     private final List<String> motd = new ArrayList<>();
 
-
+    private String description = "";
     private UUID leader;
     private String name;
-    private String description;
     private String discord = "";
     private boolean mutechat;
     private Set<UUID> mutedPlayers;
@@ -48,7 +47,6 @@ public class Guild {
         this.leader = leader;
         this.name = name;
         this.createdAt = System.currentTimeMillis();
-        this.description = "";
         this.members.put(leader, new GuildMember(leader, this.createdAt, GuildRole.LEADER));
         this.mutedPlayers = new HashSet<>();
         for (GuildPermission value : GuildPermission.values()) {

@@ -553,7 +553,7 @@ public class GuildCommand {
 
     @Children(names = "kick", async = true, description = "Kicks the player from your guild")
     public void handleKick(Player player, @Param(name = "Target") UUID target) {
-        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+        Profile profile = Universe.get(ProfileService.class).getOrLoadProfile(player.getUniqueId());
         if (profile.getGuild() == null) {
             player.sendMessage(Component.text("You are not in a guild", NamedTextColor.RED));
             return;
