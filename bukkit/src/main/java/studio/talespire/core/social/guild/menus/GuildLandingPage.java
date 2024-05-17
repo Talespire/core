@@ -193,7 +193,7 @@ public class GuildLandingPage extends Menu {
 
         private final studio.talespire.core.profile.Profile desiredPlayer;
 
-        private final DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        private final DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         @Override
         public ItemStack getItem(Player player) {
 
