@@ -207,7 +207,6 @@ public class GuildLandingPage extends Menu {
             return new ItemBuilder(Material.PLAYER_HEAD)
                     .setSkullOwner(desiredPlayer.getUsername())
                     .setName(ChatColor.translateAlternateColorCodes('&', LegacyComponentSerializer.legacyAmpersand().serialize(nameComponent)))
-                    .addLoreLine(ChatColor.GRAY + "Level: " + ChatColor.GOLD + Profile.getInstance().getProfileHandler().getProfile(desiredPlayer.getUuid()).getSelectedCharacter().getLevel())
                     .addLoreLine(ChatColor.GRAY + "Rank: " + ChatColor.AQUA + guild.getRole(desiredPlayer.getUuid()).name().toLowerCase().replaceFirst(
                             "^[a-z]", String.valueOf(Character.toUpperCase(guild.getRole(desiredPlayer.getUuid()).name().charAt(0)))))
                     .addLoreLine(ChatColor.GRAY + "Member since: " + ChatColor.AQUA + dateFormat.format(guild.getMember(desiredPlayer.getUuid()).getJoinedAt()))

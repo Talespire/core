@@ -3,6 +3,7 @@ package studio.talespire.core.social.guild.menus.conversation;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
@@ -57,6 +58,6 @@ public class DescriptionInputPrompt extends ValidatingPrompt {
 
     @Override
     public @NotNull String getPromptText(@NotNull ConversationContext conversationContext) {
-        return "Enter a new line for the Description or type \"cancel\" to cancel.";
+        return ChatColor.GREEN +  "Enter a new line for the Description or type \"cancel\" to cancel.";
     }
 }
