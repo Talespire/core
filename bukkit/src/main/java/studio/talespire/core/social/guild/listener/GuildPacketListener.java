@@ -1,7 +1,16 @@
 package studio.talespire.core.social.guild.listener;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.chat.ChatChannelService;
 import studio.lunarlabs.universe.data.redis.packet.listener.RPacketHandler;
 import studio.lunarlabs.universe.data.redis.packet.listener.RPacketListener;
+import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.profile.utils.BukkitProfileUtils;
+import studio.talespire.core.social.guild.model.Guild;
 import studio.talespire.core.social.guild.packet.*;
 
 /**
@@ -17,7 +26,22 @@ public class GuildPacketListener implements RPacketListener {
 
 
     @RPacketHandler
-    public void onGuildChat(GuildChatPacket packet) {}
+    public void onGuildChat(GuildChatPacket packet) {
+
+        Guild guild = Universe.get(ProfileService.class).getProfile(packet.getSenderId()).getGuild();
+        Player player = Bukkit.getPlayer(packet.getSenderId());
+
+        Component toSend = Component.text("Guild » ", NamedTextColor.DARK_GREEN)
+            .append(BukkitProfileUtils.getRankedNameLoaded(packet.getSenderId())
+            .appendSpace()
+            .append(Component.text("[", guild.getColor()))
+                    .append(Component.text(guild.getMember(packet.getSenderId()).getRole().name(), guild.getColor()))
+                    .append(Component.text("] ", guild.getColor()))
+            .appendSpace()
+                    .append(Component.text(": ", NamedTextColor.WHITE))
+            .append(Component.text(packet.getMessage(), NamedTextColor.WHITE)));
+
+    }
 
 
     @RPacketHandler
@@ -37,6 +61,4 @@ public class GuildPacketListener implements RPacketListener {
 
     @RPacketHandler
     public void onGuildTagChange(GuildTagPacket packet) {}
-
-
 }

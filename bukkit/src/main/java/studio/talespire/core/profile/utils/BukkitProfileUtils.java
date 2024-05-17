@@ -72,8 +72,14 @@ public class BukkitProfileUtils {
                 .append(Component.space())
                 .append(getFormatedName(playerId))
                 .build();
-
-
         return toReturn;
+    }
+
+    public static Component getRankedName(UUID playerId) {
+        return Component.text()
+                .append(Universe.get(ProfileService.class).getOrLoadProfile(playerId).getRank().getTabPrefix())
+                .append(Component.space())
+                .append(getFormatedName(playerId))
+                .build();
     }
 }
