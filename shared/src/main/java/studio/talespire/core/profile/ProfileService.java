@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 4/25/2024
  */
 public class ProfileService {
+    private final static String CACHE_KEY = "core:profiles";
+
     private final MongoCollection<Document> profileCollection;
     private final Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
 
@@ -60,6 +62,7 @@ public class ProfileService {
         )).subscribe();
 
     }
+
     public void uncacheProfile(UUID playerId) {
         this.profiles.remove(playerId);
     }

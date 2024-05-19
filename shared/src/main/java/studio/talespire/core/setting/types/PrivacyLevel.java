@@ -38,6 +38,9 @@ public enum PrivacyLevel {
     }
 
     public boolean doesMatch(Profile fromProfile, Profile targetProfile) {
+        if(fromProfile.getIgnored().contains(targetProfile.getUuid())) {
+            return false;
+        }
         if(this == EVERYONE) {
             return true;
         } else if(this == NONE) {
@@ -47,8 +50,7 @@ public enum PrivacyLevel {
             return fromProfile.getRank().isStaff();
         }
 
-        //TODO Friend System
-        return true;
+        return fromProfile.getFriends().contains(targetProfile.getUuid());
 
     }
 }
