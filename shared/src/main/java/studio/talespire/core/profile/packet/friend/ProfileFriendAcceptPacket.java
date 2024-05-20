@@ -16,6 +16,9 @@ public class ProfileFriendAcceptPacket extends ProfileFriendPacket{
 
     @Override
     public void receive() {
-
+        if(this.getRecipient() == null) {
+            return;
+        }
+        this.getRecipient().acceptRequest(this.recipientId);
     }
 }

@@ -49,7 +49,7 @@ public class CoreVelocityPlugin {
     )
     public void initPlugin(ProxyInitializeEvent event) {
         instance = this;
-        new UniverseVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder);
+        new CoreVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder);
     }
 
     @Subscribe

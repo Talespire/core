@@ -16,6 +16,9 @@ public class ProfileFriendDenyPacket extends ProfileFriendPacket{
 
     @Override
     public void receive() {
-
+        if(this.getRecipient() == null) {
+            return;
+        }
+        this.getRecipient().denyRequest(this.recipientId);
     }
 }

@@ -7,12 +7,16 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.GrantType;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.model.Punishment;
 import studio.talespire.core.profile.model.PunishmentType;
+import studio.talespire.core.profile.packet.friend.ProfileFriendAcceptPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendDenyPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendRequestCancelPacket;
 import studio.talespire.core.rank.Rank;
 import studio.talespire.core.setting.Setting;
 import studio.talespire.core.setting.SettingOption;
@@ -39,6 +43,7 @@ public abstract class Profile {
     protected final Set<Grant> grants;
 
     protected Set<UUID> friends;
+    protected Set<UUID> friendRequests;
     protected Set<UUID> ignored;
 
 
@@ -66,6 +71,7 @@ public abstract class Profile {
         this.ipAddresses = new HashSet<>();
         this.punishments = new HashSet<>();
         this.friends = new HashSet<>();
+        this.friendRequests = new HashSet<>();
         this.ignored = new HashSet<>();
         this.grants = new HashSet<>();
         this.settings = new ConcurrentHashMap<>();
@@ -82,6 +88,7 @@ public abstract class Profile {
         //Profile from d801e2d and before won't have these
         if(this.friends == null) {
             this.friends = new HashSet<>();
+            this.friendRequests = new HashSet<>();
             this.ignored = new HashSet<>();
         }
 
@@ -217,5 +224,21 @@ public abstract class Profile {
             return null;
         }
         return Universe.get(GuildService.class).getGuild(this.guildId);
+    }
+
+
+    public void acceptRequest(UUID senderId) {
+        this.friends.add(senderId);
+        this.friendRequests.remove(senderId);
+    }
+    public void denyRequest(UUID senderId) {
+        this.friendRequests.remove(senderId);
+    }
+
+    public void removeFriend(UUID receiverId) {
+        this.friends.remove(receiverId);
+    }
+    public void addRequest(UUID senderId) {
+        this.friendRequests.add(senderId);
     }
 }

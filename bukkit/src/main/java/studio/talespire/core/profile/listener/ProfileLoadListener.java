@@ -50,7 +50,7 @@ public class ProfileLoadListener implements Listener {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, component);
             return;
         }
-
+        Universe.get(ProfileService.class).cachePlayerServer(event.getUniqueId());
     }
 
     @EventHandler

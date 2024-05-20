@@ -9,17 +9,16 @@ import java.util.UUID;
  * @date 5/19/2024
  */
 @NoArgsConstructor
-public class ProfileFriendRemovePacket extends ProfileFriendPacket{
-    public ProfileFriendRemovePacket(UUID senderId, UUID recipientId) {
+public class ProfileFriendRequestCreatePacket extends ProfileFriendPacket{
+    public ProfileFriendRequestCreatePacket(UUID senderId, UUID recipientId) {
         super(senderId, recipientId);
     }
 
     @Override
     public void receive() {
-
         if(this.getRecipient() == null) {
             return;
         }
-        this.getRecipient().removeFriend(this.recipientId);
+        this.getRecipient().addRequest(senderId);
     }
 }

@@ -9,6 +9,7 @@ import studio.lunarlabs.universe.util.logging.LogFactory;
 import studio.lunarlabs.universe.util.logging.VelocityLogFactory;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.VelocityProfile;
+import studio.talespire.core.profile.VelocityProfileService;
 import studio.talespire.core.server.VelocityServerService;
 
 import java.lang.reflect.Type;
@@ -26,6 +27,7 @@ public class CoreVelocity extends Core {
         super(dataFolder);
 
         Universe.get().getRegistry().put(VelocityServerService.class, new VelocityServerService());
+        Universe.get().getRegistry().put(VelocityProfileService.class, new VelocityProfileService());
     }
 
 
