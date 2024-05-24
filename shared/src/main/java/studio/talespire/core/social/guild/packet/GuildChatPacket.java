@@ -19,13 +19,12 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter @NoArgsConstructor
 public class GuildChatPacket extends GuildPacket {
-    private UUID guildId;
     private UUID senderId;
     private String message;
     private transient Component formattedMessage;
 
     public GuildChatPacket(UUID guildId, UUID senderId, String message) {
-        this.guildId = guildId;
+        super (guildId);
         this.senderId = senderId;
         this.message = message;
     }

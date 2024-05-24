@@ -59,17 +59,15 @@ public class GuildChatChannel extends ChatChannel {
             return component;
         }
 
-        Component toSend = Component.text("Guild » ", NamedTextColor.DARK_GREEN)
+        return  Component.text("Guild ", NamedTextColor.DARK_GREEN)
                 .append(BukkitProfileUtils.getRankedNameLoaded(player.getUniqueId())
                         .appendSpace()
                         .append(Component.text("[", guild.getColor()))
                         .append(Component.text(guild.getMember(player.getUniqueId()).getRole().name(), guild.getColor()))
-                        .append(Component.text("] ", guild.getColor()))
-                        .appendSpace()
-                        .append(Component.text(": ", NamedTextColor.WHITE))
+                        .append(Component.text("]", guild.getColor()))
+                        .append(Component.text(" » ", NamedTextColor.WHITE))
                         .append(component.color(NamedTextColor.WHITE)));
 
-        return toSend;
     }
 
     @Override

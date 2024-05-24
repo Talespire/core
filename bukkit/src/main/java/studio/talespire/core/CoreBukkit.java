@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
+import studio.talespire.core.chat.BukkitChatService;
 import studio.talespire.core.placeholder.PlaceholderService;
 import studio.talespire.core.profile.BukkitProfile;
 import studio.talespire.core.profile.BukkitProfileService;
@@ -13,6 +14,7 @@ import studio.talespire.core.profile.Profile;
 import studio.talespire.core.rank.BukkitRankService;
 import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
+import studio.talespire.core.social.global.BukkitGlobalService;
 import studio.talespire.core.social.guild.BukkitGuildService;
 
 import java.lang.reflect.Type;
@@ -27,13 +29,20 @@ public class CoreBukkit extends Core {
     public CoreBukkit(JavaPlugin plugin) {
         super(plugin.getDataFolder().toPath());
 
-
+        //-- Server
         Universe.get().getRegistry().put(PlaceholderService.class, new PlaceholderService());
         Universe.get(ServerService.class).registerProvider(new BukkitServerProvider());
+
+        //-- Profile
         Universe.get().getRegistry().put(BukkitRankService.class, new BukkitRankService(plugin));
         Universe.get().getRegistry().put(BukkitProfileService.class, new BukkitProfileService(plugin));
+
+        //-- Social
+        Universe.get().getRegistry().put(BukkitGlobalService.class, new BukkitGlobalService(plugin));
         Universe.get().getRegistry().put(BukkitGuildService.class, new BukkitGuildService(plugin));
 
+        //-- Chat
+        Universe.get().getRegistry().put(BukkitChatService.class, new BukkitChatService(plugin));
 
     }
 
