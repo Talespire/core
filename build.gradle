@@ -61,7 +61,7 @@ subprojects {
     apply plugin: 'com.netflix.nebula.maven-publish'
     apply plugin: 'dev.vankka.dependencydownload.plugin'
 
-    var versionWithGit = "$version-${grgit.head().abbreviatedId}-${grgit.branch.current().name.replace("/", "-")}".toString()
+    var versionWithGit = "$version-${grgit.branch.current().name.replace("/", "-")}".toString()
 
     compileJava {
         sourceCompatibility = 17
