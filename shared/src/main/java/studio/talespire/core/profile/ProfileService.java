@@ -5,9 +5,7 @@ import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import org.bson.Document;
 import reactor.core.publisher.Mono;
-import redis.clients.jedis.Jedis;
 import studio.lunarlabs.universe.Universe;
-import studio.lunarlabs.universe.data.redis.RedisCommand;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
@@ -16,7 +14,6 @@ import studio.talespire.core.profile.grant.adapter.GrantAdapter;
 import studio.talespire.core.server.ServerService;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -79,10 +76,20 @@ public class ProfileService {
             return null;
         });
     }
+
     public void uncachePlayerServer(UUID playerId) {
         Universe.get(RedisService.class).executeBackendCommand(jedis -> {
             jedis.hdel(CACHE_KEY, playerId.toString());
             return null;
         });
     }
+
+    public boolean isPlayerServerCached(UUID playerId) {
+        return Universe.get(RedisService.class).executeBackendCommand(jedis -> jedis.hexists(CACHE_KEY, playerId.toString()));
+    }
+
+    public String getPlayerServer(UUID playerId) {
+        return Universe.get(RedisService.class).executeBackendCommand(jedis -> jedis.hget(CACHE_KEY, playerId.toString()));
+    }
+
 }

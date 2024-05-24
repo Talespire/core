@@ -15,4 +15,5 @@ public class PlayerProfileListener {
     public void onPlayerDisconnect(DisconnectEvent event) {
         Universe.get(ProfileService.class).uncachePlayerServer(event.getPlayer().getUniqueId());
     }
+
 }
