@@ -16,7 +16,8 @@ import studio.lunarlabs.universe.annotation.BukkitPlugin;
         load = "STARTUP",
         gitReplacements = true,
         apiVersion = "1.13",
-        depend = "Universe"
+        depend = "Universe",
+        author = "Talespire Development Team"
 )
 public class CorePlugin extends JavaPlugin {
     @Getter
