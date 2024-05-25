@@ -16,8 +16,6 @@ import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.MenuUtils;
 
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -337,6 +335,7 @@ public class FriendCommand {
                 .append(MenuUtils.chatSeparator(NamedTextColor.BLUE))
                 .build();
 
+        player.sendMessage(toSend);
     }
     //TODO: Make a nickname command (maybe)
 }
