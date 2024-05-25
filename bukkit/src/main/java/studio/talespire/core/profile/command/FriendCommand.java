@@ -6,17 +6,18 @@ import me.andyreckt.raspberry.annotation.Param;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
-import studio.talespire.core.chat.BukkitChatService;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.MenuUtils;
 
-import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 
 /**
@@ -186,38 +187,49 @@ public class FriendCommand {
             return;
         }
 
-        int pagesOfFriends = (int) Math.ceil(profile.getFriends().size() / 8.0);
+        int maxFriendsDisplayed = 8;
+        int pagesOfFriends = (int) Math.ceil((double) profile.getFriends().size() / maxFriendsDisplayed);
 
         Component message;
 
         if (page == pagesOfFriends) {
-            message.append(Component.text("(Page " + page + " + " + pagesOfFriends + ") ", NamedTextColor.GOLD))
-                .append(Component.text("« Friends", NamedTextColor.GOLD)
-                        .clickEvent(ClickEvent.runCommand("/friend list " + (page - 1)))
-                );
+            message = (Component.text("« Friends", NamedTextColor.GOLD)
+                    .clickEvent(ClickEvent.runCommand("/friend list " + (page - 1)))
+                )
+                    .append(Component.text("(Page " + page + " of " + pagesOfFriends + ") ", NamedTextColor.GOLD));
         } else if (page > 1) {
             message = Component.text("« Friends ", NamedTextColor.GOLD)
                     .clickEvent(ClickEvent.runCommand("/friend list " + (page - 1)))
                     .append(Component.text("Friends ", NamedTextColor.GOLD))
-                    .append(Component.text("(Page " + page + " + " + pagesOfFriends + ") ", NamedTextColor.GOLD))
+                    .append(Component.text("(Page " + page + " of " + pagesOfFriends + ") ", NamedTextColor.GOLD))
                     .append(
                             Component.text("»", NamedTextColor.GOLD)
                                     .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
                     );
-        } else {
+        } else if (pagesOfFriends > 1){
             message = Component.text("Friends ", NamedTextColor.GOLD)
-                .append(Component.text("(Page " + page + " + " + pagesOfFriends + ") ", NamedTextColor.GOLD))
+                .append(Component.text("(Page " + page + " of " + pagesOfFriends + ") ", NamedTextColor.GOLD))
                 .append(
                         Component.text("»", NamedTextColor.GOLD)
                                 .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
                 );
+        } else {
+            message = Component.text("Friends (Page 1 of 1)", NamedTextColor.GOLD);
         }
 
-        // List 8 of their friends, prioritizing friend that are online
-        for (UUID friend : profile.getFriends()) {
-            Profile friendProfile = Universe.get(ProfileService.class).getOrLoadProfile(friend);
+        int numFriendsDisplayed = 0;
+        ProfileService profileService = Universe.get(ProfileService.class);
 
-
+        // List the amount of friends that corresponds to (pageNumber * maxFriendsDisplayed) + numFriendsDisplayed
+        for (int i = (page - 1) * maxFriendsDisplayed; i < profile.getFriends().size() && numFriendsDisplayed < maxFriendsDisplayed; i++) {
+            UUID uuid = profile.getFriend(i);
+            String serverId = profileService.getPlayerServer(uuid);
+            if (serverId == null) {
+                message = message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is offline", NamedTextColor.RED)));
+            } else {
+                message = message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is on " + serverId, NamedTextColor.YELLOW)));
+            }
+            numFriendsDisplayed++;
         }
 
         Component toSend = Component.text()
@@ -229,48 +241,46 @@ public class FriendCommand {
             .build();
 
         player.sendMessage(toSend);
+    }
 
+    @Children(names = {"remove", "r"}, async = true, description = "Remove a friend")
+    public void handleRemove(Player player, @Param(name = "Target") UUID target) {
+        //-- Instance Variables
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+        Profile targetProfile = Universe.get(ProfileService.class).getOrLoadProfile(target);
+
+        // Check if the target's profile is null
+        if (targetProfile == null) {
+            player.sendMessage(Component.text("No player found with that name!", NamedTextColor.RED));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
+        // Check if the profile is null
+        if (profile == null) {
+            return;
+        }
+
+        // If the player has the target added as a friend, remove the target from the friends list
+        if (profile.getFriends().contains(target)) {
+            // Get the profile and remove the target from the friends list
+            profile.getFriends().remove(target);
+
+            // Get the target profile and remove the player from the friends list
+            targetProfile.getFriends().remove(player.getUniqueId());
+
+            // Send a message to the player
+            player.sendMessage(Component.text("You have removed ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)).append(Component.text(" from your friends list", NamedTextColor.RED)));
+        } else {
+            // Send a message to the player if they do not have the target added as a friend
+            player.sendMessage(Component.text("You do not have ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)).append(Component.text(" added as a friend", NamedTextColor.RED)));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+        }
     }
 
 
+    //TODO: Make a nickname command (maybe)
 
-//    @Children(names = "list", async = true)
-//    public void handleList(Player player) {
-//        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
-//        if(profile == null) {
-//            return;
-//        }
-//        player.sendMessage(Component.text("You have " + profile.getFriends().size() + " friends"));
-//        ProfileService profileService=  Universe.get(ProfileService.class);
-//        for (UUID uuid : profile.getFriends().stream().sorted((o1, o2) -> Boolean.compare(profileService.isPlayerServerCached(o1), profileService.isPlayerServerCached(o2))).toList()) {
-//            try {
-//                String name = Universe.get(UUIDCacheService.class).get().getName(uuid).get(1, TimeUnit.SECONDS);
-//                String serverId = profileService.getPlayerServer(uuid);
-//                if(serverId == null) {
-//                    player.sendMessage(name + " is offline since ");
-//                } else {
-//                    player.sendMessage(name + " is on " + serverId);
-//                }
-//
-//            } catch (InterruptedException | TimeoutException | ExecutionException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//    }
-//    @Children(names = "", async = true)
-//    public void handle(Player player, @Param(name = "UUID") UUID targetId) {
-//
-//    }
-
-
-    // list
-
-    // Nickname
-
-    // notifications
-
-    // remove
 
     // removeall
 

@@ -251,6 +251,10 @@ public abstract class Profile {
         this.incomingFriendRequests.add(senderId);
     }
 
+    public UUID getFriend(int index) {
+        return new ArrayList<>(this.friends).get(index);
+    }
+
     public void sendRequest(UUID targetId) {
         this.outGoingFriendRequests.add(targetId);
     }
