@@ -27,7 +27,7 @@ import java.util.UUID;
 public class CoreBukkit extends Core {
     public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
     public CoreBukkit(JavaPlugin plugin) {
-        super(plugin.getDataFolder().toPath());
+        super(plugin.getDataFolder().toPath(), plugin.getSLF4JLogger());
 
         //-- Server
         Universe.get().getRegistry().put(PlaceholderService.class, new PlaceholderService());

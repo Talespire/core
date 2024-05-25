@@ -2,6 +2,7 @@ package studio.talespire.core;
 
 import com.mongodb.reactivestreams.client.MongoDatabase;
 import lombok.Getter;
+import org.slf4j.Logger;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.mongo.MongoService;
 import studio.lunarlabs.universe.util.Constants;
@@ -11,6 +12,8 @@ import studio.talespire.core.profile.ProfileService;
 import studio.talespire.core.rank.RankService;
 import studio.talespire.core.server.ServerService;
 import studio.talespire.core.setting.SettingService;
+import studio.talespire.core.skin.CustomSkinService;
+import studio.talespire.core.skin.model.CustomSkin;
 import studio.talespire.core.social.guild.GuildService;
 
 import java.lang.reflect.Type;
@@ -28,12 +31,13 @@ public abstract class Core {
 
     private final Path dataFolder;
     private final MongoDatabase database;
-    
+    private final Logger logger;
 
-    public Core(Path dataFolder) {
+    public Core(Path dataFolder, Logger logger) {
         instance = this;
         this.dataFolder = dataFolder;
         this.database = Universe.get(MongoService.class).getClient().getDatabase("core");
+        this.logger = logger;
 
         Universe.get(UUIDCache.class).update(Constants.getConsoleUuid(), "Console", true);
         Universe.get().getRegistry().put(ServerService.class, new ServerService());
@@ -41,6 +45,7 @@ public abstract class Core {
         Universe.get().getRegistry().put(SettingService.class, new SettingService());
         Universe.get().getRegistry().put(GuildService.class, new GuildService());
         Universe.get().getRegistry().put(ProfileService.class, new ProfileService());
+        Universe.get().getRegistry().put(CustomSkinService.class, new CustomSkinService());
 
     }
     public abstract Type getProfileType();

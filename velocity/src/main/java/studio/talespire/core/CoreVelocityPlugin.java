@@ -36,6 +36,7 @@ public class CoreVelocityPlugin {
     private final Logger logger;
     private final Path dataFolder;
 
+
     @Inject
     public CoreVelocityPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataFolder) {
         this.server = server;
@@ -48,7 +49,7 @@ public class CoreVelocityPlugin {
     )
     public void initPlugin(ProxyInitializeEvent event) {
         instance = this;
-        new CoreVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder);
+        new CoreVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder, logger);
     }
 
     @Subscribe
