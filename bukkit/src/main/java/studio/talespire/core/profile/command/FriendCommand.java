@@ -203,15 +203,15 @@ public class FriendCommand {
                     .append(Component.text("Friends ", NamedTextColor.GOLD))
                     .append(Component.text("(Page " + page + " of " + pagesOfFriends + ") ", NamedTextColor.GOLD))
                     .append(
-                            Component.text("»", NamedTextColor.GOLD)
-                                    .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
+                        Component.text("»", NamedTextColor.GOLD)
+                            .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
                     );
         } else if (pagesOfFriends > 1){
             message = Component.text("Friends ", NamedTextColor.GOLD)
                 .append(Component.text("(Page " + page + " of " + pagesOfFriends + ") ", NamedTextColor.GOLD))
                 .append(
-                        Component.text("»", NamedTextColor.GOLD)
-                                .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
+                    Component.text("»", NamedTextColor.GOLD)
+                        .clickEvent(ClickEvent.runCommand("/friend list " + (page + 1)))
                 );
         } else {
             message = Component.text("Friends (Page 1 of 1)", NamedTextColor.GOLD);
@@ -225,9 +225,15 @@ public class FriendCommand {
             UUID uuid = profile.getFriend(i);
             String serverId = profileService.getPlayerServer(uuid);
             if (serverId == null) {
-                message = message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is offline", NamedTextColor.RED)));
+                message = profile.getBestFriends().contains(uuid) ?
+                    message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is offline", NamedTextColor.RED)))
+                        .decorate(TextDecoration.BOLD)
+                    : message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is offline", NamedTextColor.RED)));
             } else {
-                message = message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is on " + serverId, NamedTextColor.YELLOW)));
+                message = profile.getBestFriends().contains(uuid) ?
+                    message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is on " + serverId, NamedTextColor.YELLOW)))
+                        .decorate(TextDecoration.BOLD)
+                    : message.append(BukkitProfileUtils.getRankedName(uuid).append(Component.text(" is on " + serverId, NamedTextColor.YELLOW)));
             }
             numFriendsDisplayed++;
         }
@@ -278,11 +284,49 @@ public class FriendCommand {
         }
     }
 
+    @Children(names = {"removeall", "ra"}, async = true, description = "Remove all friends")
+    public void handleRemoveAll(Player player) {
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
 
+        // Check if the profile is null
+        if (profile == null) {
+            return;
+        }
+
+        // Chick if the player has any friends
+        if (profile.getFriends().isEmpty()) {
+            player.sendMessage(Component.text("You do not have any friends to remove", NamedTextColor.RED));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
+        // Remove all friends from the player's friends list
+        for (UUID friend : profile.getFriends()) {
+            Profile friendProfile = Universe.get(ProfileService.class).getOrLoadProfile(friend);
+            friendProfile.getFriends().remove(player.getUniqueId());
+        }
+
+        player.sendMessage(Component.text("You have removed all friends", NamedTextColor.GREEN));
+    }
+
+    @Children(names = {"requests", "req"}, async = true, description = "List all friend requests")
+    public void handleRequets(Player player) {
+        Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
+
+        Component message = Component.text("You have friend Requests from: ", NamedTextColor.GREEN);
+
+        for (UUID request : profile.getIncomingFriendRequests()) {
+            message = message.append(BukkitProfileUtils.getRankedName(request)).append(Component.text(" has sent you a friend request", NamedTextColor.GREEN));
+        }
+
+        Component toSend = Component.text()
+                .append(MenuUtils.chatSeparator(NamedTextColor.BLUE))
+                .append(Component.newline())
+                .append(message)
+                .append(Component.newline())
+                .append(MenuUtils.chatSeparator(NamedTextColor.BLUE))
+                .build();
+
+    }
     //TODO: Make a nickname command (maybe)
-
-
-    // removeall
-
-    // requests
 }
