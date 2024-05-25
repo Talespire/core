@@ -42,10 +42,11 @@ public abstract class Profile {
     protected final Set<Punishment> punishments;
     protected final Set<Grant> grants;
 
+    protected Set<UUID> bestFriends;
     protected Set<UUID> friends;
-    protected Set<UUID> friendRequests;
+    protected Set<UUID> outGoingFriendRequests;
+    protected Set<UUID> incomingFriendRequests;
     protected Set<UUID> ignored;
-
 
     protected long firstSeen;
     protected long lastSeen;
@@ -70,8 +71,10 @@ public abstract class Profile {
         this.lastSeen = System.currentTimeMillis();
         this.ipAddresses = new HashSet<>();
         this.punishments = new HashSet<>();
+        this.bestFriends = new HashSet<>();
         this.friends = new HashSet<>();
-        this.friendRequests = new HashSet<>();
+        this.outGoingFriendRequests = new HashSet<>();
+        this.incomingFriendRequests = new HashSet<>();
         this.ignored = new HashSet<>();
         this.grants = new HashSet<>();
         this.settings = new ConcurrentHashMap<>();
@@ -85,11 +88,17 @@ public abstract class Profile {
             if (this.settings.containsKey(setting)) continue;
             this.settings.put(setting, setting.getDefaultValue());
         }
+
         //Profile from d801e2d and before won't have these
         if(this.friends == null) {
             this.friends = new HashSet<>();
-            this.friendRequests = new HashSet<>();
             this.ignored = new HashSet<>();
+        }
+
+        if (bestFriends == null) {
+            bestFriends = new HashSet<>();
+            this.outGoingFriendRequests = new HashSet<>();
+            this.incomingFriendRequests = new HashSet<>();
         }
 
         this.rank = calculateRank();
@@ -229,16 +238,22 @@ public abstract class Profile {
 
     public void acceptRequest(UUID senderId) {
         this.friends.add(senderId);
-        this.friendRequests.remove(senderId);
+        this.incomingFriendRequests.remove(senderId);
     }
     public void denyRequest(UUID senderId) {
-        this.friendRequests.remove(senderId);
+        this.incomingFriendRequests.remove(senderId);
     }
 
     public void removeFriend(UUID receiverId) {
         this.friends.remove(receiverId);
     }
     public void addRequest(UUID senderId) {
-        this.friendRequests.add(senderId);
+        this.incomingFriendRequests.add(senderId);
     }
+
+    public void sendRequest(UUID targetId) {
+        this.outGoingFriendRequests.add(targetId);
+    }
+
+
 }
