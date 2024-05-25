@@ -313,6 +313,16 @@ public class FriendCommand {
     public void handleRequets(Player player) {
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
 
+        if (profile == null) {
+            return;
+        }
+
+        if (profile.getIncomingFriendRequests().isEmpty()) {
+            player.sendMessage(Component.text("You do not have any friend requests", NamedTextColor.RED));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
+            return;
+        }
+
         Component message = Component.text("You have friend Requests from: ", NamedTextColor.GREEN);
 
         for (UUID request : profile.getIncomingFriendRequests()) {
