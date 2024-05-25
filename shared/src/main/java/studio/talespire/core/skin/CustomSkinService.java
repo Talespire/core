@@ -1,14 +1,12 @@
 package studio.talespire.core.skin;
 
 import com.google.gson.JsonObject;
-import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.util.Skin;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
 import studio.talespire.core.skin.model.CustomSkin;
 import studio.talespire.core.util.StringUtils;
 
-import javax.swing.plaf.IconUIResource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,7 +39,7 @@ public class CustomSkinService {
         for (File file : skinFolder.listFiles()) {
             try {
                 JsonObject object = Statics.gson().fromJson(Files.readString(file.toPath()), JsonObject.class);
-                String name = StringUtils.getFileExtension(file);
+                String name = StringUtils.getFileName(file);
                 this.skins.put(name, new CustomSkin(
                         name, object.get("value").getAsString(), object.get("signature").getAsString()
                 ));

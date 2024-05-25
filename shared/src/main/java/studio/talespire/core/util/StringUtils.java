@@ -14,12 +14,13 @@ public class StringUtils {
 
         return word.substring(0, 1).toUpperCase() + word.substring(1);
     }
-    public static String getFileExtension(File file) {
-        String name = file.getName();
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return ""; // empty extension
+    public static String getFileName(File file) {
+        String fileName =  file.getName();
+        int index = fileName.lastIndexOf('.');
+        if (index == -1) {
+            return fileName;
+        } else {
+            return fileName.substring(0, index);
         }
-        return name.substring(lastIndexOf);
     }
 }
