@@ -61,6 +61,7 @@ public abstract class Profile {
     protected transient Rank rank;
 
     protected transient Map<String, Boolean> permissions;
+    protected transient boolean requireSaving;
 
 
 
@@ -239,16 +240,20 @@ public abstract class Profile {
     public void acceptRequest(UUID senderId) {
         this.friends.add(senderId);
         this.outGoingFriendRequests.remove(senderId);
+        this.requireSaving = true;
     }
     public void denyRequest(UUID senderId) {
         this.outGoingFriendRequests.remove(senderId);
+        this.requireSaving = true;
     }
 
     public void removeFriend(UUID receiverId) {
         this.friends.remove(receiverId);
+        this.requireSaving = true;
     }
     public void addRequest(UUID senderId) {
         this.incomingFriendRequests.add(senderId);
+        this.requireSaving = true;
     }
 
     public UUID getFriend(int index) {
@@ -257,7 +262,10 @@ public abstract class Profile {
 
     public void sendRequest(UUID targetId) {
         this.outGoingFriendRequests.add(targetId);
+        this.requireSaving = true;
     }
 
-
+    public void markToSave() {
+        this.requireSaving = true;
+    }
 }

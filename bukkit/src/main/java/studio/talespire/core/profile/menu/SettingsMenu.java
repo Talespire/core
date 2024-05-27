@@ -41,5 +41,8 @@ public class SettingsMenu extends Menu {
         return buttons;
     }
 
-
+    @Override
+    public boolean isUpdateAfterClick() {
+        return true;
+    }
 }

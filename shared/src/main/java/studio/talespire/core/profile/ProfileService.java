@@ -13,15 +13,20 @@ import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.adapter.GrantAdapter;
 import studio.talespire.core.server.ServerService;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Moose1301
  * @date 4/25/2024
  */
 public class ProfileService {
+    public static final Duration AUTOSAVE_DURATION  = Duration.of(10, ChronoUnit.SECONDS);
     private final static String CACHE_KEY = "core:profiles";
 
     private final MongoCollection<Document> profileCollection;
@@ -30,6 +35,12 @@ public class ProfileService {
     public ProfileService() {
         this.profileCollection = Core.getInstance().getDatabase().getCollection("profiles");
         Statics.registerTypeAdapter(Grant.class, new GrantAdapter());
+    }
+    public void saveRequiredProfiles() {
+        for (Profile value : this.profiles.values()) {
+            if(!value.isRequireSaving()) continue;
+            this.saveProfile(value);
+        }
     }
 
     public Profile getProfile(UUID uuid) {
@@ -63,6 +74,7 @@ public class ProfileService {
                 Document.parse(Statics.plainGson().toJson(profile)),
                 new ReplaceOptions().upsert(true)
         )).subscribe();
+        profile.setRequireSaving(false);
 
     }
 

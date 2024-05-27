@@ -12,20 +12,20 @@ import java.util.List;
  * @author Moose1301
  * @date 4/30/2024
  */
-public class PrivateMessageSetting extends Setting<PrivacyLevel> {
+public class FriendRequestSetting extends Setting<PrivacyLevel> {
     @Override
     public String getId() {
-        return "private-message";
+        return "friend-requests";
     }
 
     @Override
     public Component getName() {
-        return Component.text("Private Messages");
+        return Component.text("Friend Requests");
     }
 
     @Override
     public Component getDescription() {
-        return Component.text("How would you like incoming messages to be filtered");
+        return Component.text("Who is allowed to send you friend requests");
     }
 
     @Override
@@ -38,7 +38,6 @@ public class PrivateMessageSetting extends Setting<PrivacyLevel> {
         return List.of(
                 PrivacyLevel.EVERYONE.getValue(),
                 PrivacyLevel.GUILD.getValue(),
-                PrivacyLevel.FRIENDS.getValue(),
                 PrivacyLevel.STAFF.getValue(),
                 PrivacyLevel.NONE.getValue()
         );

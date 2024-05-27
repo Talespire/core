@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
 import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.util.CommandUtil;
+import studio.lunarlabs.universe.util.general.Tasks;
 import studio.talespire.core.profile.command.FriendCommand;
 import studio.talespire.core.profile.command.GrantCommand;
 import studio.talespire.core.profile.command.FindCommand;
@@ -29,5 +30,10 @@ public class BukkitProfileService {
         Universe.get(RedisService.class).registerListener(new ProfilePacketListener());
 
         CommandUtil.registerAll(new GrantCommand(), new SettingsCommand(), new FindCommand(), new FriendCommand());
+
+        Tasks.runAsyncTimer(() -> Universe.get(ProfileService.class).saveRequiredProfiles(),
+                ProfileService.AUTOSAVE_DURATION.getSeconds() * 20,
+                ProfileService.AUTOSAVE_DURATION.getSeconds() * 20
+        );
     }
 }

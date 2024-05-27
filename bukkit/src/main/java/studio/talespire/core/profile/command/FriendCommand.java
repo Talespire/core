@@ -17,6 +17,7 @@ import studio.talespire.core.profile.packet.friend.ProfileFriendDenyPacket;
 import studio.talespire.core.profile.packet.friend.ProfileFriendRemovePacket;
 import studio.talespire.core.profile.packet.friend.ProfileFriendRequestCreatePacket;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
+import studio.talespire.core.setting.types.privacy.FriendRequestSetting;
 import studio.talespire.core.utils.MenuUtils;
 
 import java.util.UUID;
@@ -42,8 +43,14 @@ public class FriendCommand {
             return;
         }
 
+
         // Check if the profile is null
         if (profile == null) {
+            return;
+        }
+        if(!targetProfile.getSetting(FriendRequestSetting.class).value().doesMatch(profile, targetProfile)) {
+            player.sendMessage(Component.text("You cannot send friend requests to this person!", NamedTextColor.RED));
+            player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
         }
 
@@ -65,6 +72,7 @@ public class FriendCommand {
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
             targetProfile.getFriends().add(player.getUniqueId());
 
+            profile.markToSave();
             player.sendMessage(Component.text("You already have a friend request from ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)));
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
@@ -74,7 +82,6 @@ public class FriendCommand {
         profile.getOutGoingFriendRequests().add(target);
 
         player.sendMessage(Component.text("You have sent a friend request to ", NamedTextColor.GREEN).append(BukkitProfileUtils.getRankedName(target)));
-        //TODO: Send a message to the target
     }
 
     @Children(names = {"accept", "a"}, async = true, description = "Accept a friend request")
@@ -105,8 +112,8 @@ public class FriendCommand {
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
             targetProfile.getFriends().add(player.getUniqueId());
             new ProfileFriendAcceptPacket(player.getUniqueId(), target).send();
-            //TODO: Send a message to the target
 
+            profile.markToSave();
             // Send a message to the player
             player.sendMessage(Component.text("You are now friends with ", NamedTextColor.GREEN).append(BukkitProfileUtils.getRankedName(target)));
 
@@ -138,6 +145,7 @@ public class FriendCommand {
         // Check if the player has them added as a friend
         if (profile.getFriends().contains(target)) {
             profile.getBestFriends().add(target);
+            profile.markToSave();
             player.sendMessage(Component.text("You have added ", NamedTextColor.GREEN).append(BukkitProfileUtils.getRankedName(target)).append(Component.text(" to your best friends list", NamedTextColor.GREEN)));
         } else {
             // Otherwise send them a message that they aren't friends with that player
@@ -172,6 +180,7 @@ public class FriendCommand {
             // Get the target profile and remove the player from the friend requests
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
             new ProfileFriendDenyPacket(player.getUniqueId(), target).send();
+            profile.markToSave();
             // Send a message to the player
             player.sendMessage(Component.text("You have denied the friend request from ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)));
         } else {
@@ -279,6 +288,8 @@ public class FriendCommand {
             // Get the target profile and remove the player from the friends list
             targetProfile.getFriends().remove(player.getUniqueId());
             new ProfileFriendRemovePacket(player.getUniqueId(), target).send();
+
+            profile.markToSave();
             // Send a message to the player
             player.sendMessage(Component.text("You have removed ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)).append(Component.text(" from your friends list", NamedTextColor.RED)));
         } else {
@@ -310,6 +321,7 @@ public class FriendCommand {
             friendProfile.getFriends().remove(player.getUniqueId());
             new ProfileFriendRemovePacket(player.getUniqueId(), friend).send();
         }
+        profile.markToSave();
 
         player.sendMessage(Component.text("You have removed all friends", NamedTextColor.GREEN));
     }
