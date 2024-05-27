@@ -219,6 +219,9 @@ public abstract class Profile {
         }
         return (SettingOption<T>) settings.get(setting);
     }
+    public <T> void setSetting(Setting<T> setting, SettingOption<?> option) {
+        this.settings.put(setting, option);
+    }
 
     @SuppressWarnings("unchecked")
     public <T> SettingOption<T> getSetting(Class<? extends Setting<T>> setting) {
