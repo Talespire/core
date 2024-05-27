@@ -19,6 +19,6 @@ public class ProfileFriendAcceptPacket extends ProfileFriendPacket{
         if(this.getRecipient() == null) {
             return;
         }
-        this.getRecipient().acceptRequest(this.recipientId);
+        this.getRecipient().acceptRequest(this.senderId);
     }
 }

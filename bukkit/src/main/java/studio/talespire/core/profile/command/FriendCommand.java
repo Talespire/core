@@ -12,6 +12,10 @@ import org.bukkit.entity.Player;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.profile.Profile;
 import studio.talespire.core.profile.ProfileService;
+import studio.talespire.core.profile.packet.friend.ProfileFriendAcceptPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendDenyPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendRemovePacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendRequestCreatePacket;
 import studio.talespire.core.profile.utils.BukkitProfileUtils;
 import studio.talespire.core.utils.MenuUtils;
 
@@ -25,8 +29,9 @@ import java.util.UUID;
 @Command(names = {"friend", "f"}, description = "Friend Commands")
 public class FriendCommand {
 
-    @Children(names = {"friend", "f", "add"}, async = true, description = "Add a friend")
-    public void AddFriend(Player player, @Param(name = "Target") UUID target) {
+
+    @Children(names = {"add"}, async = true, description = "Add a friend")
+    public void handleAdd(Player player, @Param(name = "Target") UUID target) {
         //-- Instance Variables
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         Profile targetProfile = Universe.get(ProfileService.class).getOrLoadProfile(target);
@@ -54,6 +59,7 @@ public class FriendCommand {
             // Update the player's profile
             profile.getIncomingFriendRequests().remove(target);
             profile.getFriends().add(target);
+            new ProfileFriendAcceptPacket(player.getUniqueId(), target).send();
 
             // Update the target's profile
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
@@ -63,7 +69,7 @@ public class FriendCommand {
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
             return;
         }
-
+        new ProfileFriendRequestCreatePacket(player.getUniqueId(), target).send();
         targetProfile.getIncomingFriendRequests().add(player.getUniqueId());
         profile.getOutGoingFriendRequests().add(target);
 
@@ -98,7 +104,7 @@ public class FriendCommand {
             // Get the target profile and remove the player from the friend requests and add the player to the friends list
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
             targetProfile.getFriends().add(player.getUniqueId());
-
+            new ProfileFriendAcceptPacket(player.getUniqueId(), target).send();
             //TODO: Send a message to the target
 
             // Send a message to the player
@@ -165,7 +171,7 @@ public class FriendCommand {
 
             // Get the target profile and remove the player from the friend requests
             targetProfile.getOutGoingFriendRequests().remove(player.getUniqueId());
-
+            new ProfileFriendDenyPacket(player.getUniqueId(), target).send();
             // Send a message to the player
             player.sendMessage(Component.text("You have denied the friend request from ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)));
         } else {
@@ -272,7 +278,7 @@ public class FriendCommand {
 
             // Get the target profile and remove the player from the friends list
             targetProfile.getFriends().remove(player.getUniqueId());
-
+            new ProfileFriendRemovePacket(player.getUniqueId(), target).send();
             // Send a message to the player
             player.sendMessage(Component.text("You have removed ", NamedTextColor.RED).append(BukkitProfileUtils.getRankedName(target)).append(Component.text(" from your friends list", NamedTextColor.RED)));
         } else {
@@ -302,6 +308,7 @@ public class FriendCommand {
         for (UUID friend : profile.getFriends()) {
             Profile friendProfile = Universe.get(ProfileService.class).getOrLoadProfile(friend);
             friendProfile.getFriends().remove(player.getUniqueId());
+            new ProfileFriendRemovePacket(player.getUniqueId(), friend).send();
         }
 
         player.sendMessage(Component.text("You have removed all friends", NamedTextColor.GREEN));
@@ -337,5 +344,6 @@ public class FriendCommand {
 
         player.sendMessage(toSend);
     }
+
     //TODO: Make a nickname command (maybe)
 }

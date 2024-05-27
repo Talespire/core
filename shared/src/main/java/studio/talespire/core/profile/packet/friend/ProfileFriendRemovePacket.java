@@ -20,6 +20,6 @@ public class ProfileFriendRemovePacket extends ProfileFriendPacket{
         if(this.getRecipient() == null) {
             return;
         }
-        this.getRecipient().removeFriend(this.recipientId);
+        this.getRecipient().removeFriend(this.senderId);
     }
 }

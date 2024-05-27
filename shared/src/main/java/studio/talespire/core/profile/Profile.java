@@ -238,10 +238,10 @@ public abstract class Profile {
 
     public void acceptRequest(UUID senderId) {
         this.friends.add(senderId);
-        this.incomingFriendRequests.remove(senderId);
+        this.outGoingFriendRequests.remove(senderId);
     }
     public void denyRequest(UUID senderId) {
-        this.incomingFriendRequests.remove(senderId);
+        this.outGoingFriendRequests.remove(senderId);
     }
 
     public void removeFriend(UUID receiverId) {
