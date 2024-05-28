@@ -35,5 +35,7 @@ public class BukkitProfileService {
                 ProfileService.AUTOSAVE_DURATION.getSeconds() * 20,
                 ProfileService.AUTOSAVE_DURATION.getSeconds() * 20
         );
+        CommandUtil.registerAll(new GrantCommand(), new SettingsCommand(), new FindCommand()
+        , new FriendCommand());
     }
 }
