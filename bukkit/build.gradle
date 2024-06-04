@@ -7,6 +7,10 @@ version = '0.0.1'
 
 repositories {
     mavenCentral()
+    maven {
+        name = "citizens-repo"
+        url = "https://maven.citizensnpcs.co/repo"
+    }
 }
 
 dependencies {
@@ -19,5 +23,9 @@ dependencies {
     compileOnly "me.andyreckt.raspberry:paper:1.1.22"
 
     compileOnly "studio.talespire.profile:shared:0.0.1"
+
+    compileOnly("net.citizensnpcs:citizens-main:2.0.34-SNAPSHOT") {
+        exclude group: '*', module: '*'
+    }
 
 }
