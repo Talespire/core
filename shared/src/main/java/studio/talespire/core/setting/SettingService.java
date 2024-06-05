@@ -1,5 +1,6 @@
 package studio.talespire.core.setting;
 
+import studio.talespire.core.setting.types.privacy.FriendRequestSetting;
 import studio.talespire.core.setting.types.privacy.GuildInviteSetting;
 import studio.talespire.core.setting.types.privacy.PrivateMessageSetting;
 import studio.talespire.core.setting.types.sounds.MessageSoundSetting;
@@ -20,6 +21,7 @@ public class SettingService {
         registerSetting(new PrivateMessageSetting());
         registerSetting(new MessageSoundSetting());
         registerSetting(new GuildInviteSetting());
+        registerSetting(new FriendRequestSetting());
     }
 
     private void registerSetting(Setting<?> setting) {

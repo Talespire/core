@@ -16,6 +16,7 @@ public class BukkitGlobalService {
     private final DefaultChatChannel channel = new DefaultChatChannel();
 
     public BukkitGlobalService(JavaPlugin plugin) {
-        Universe.get(ChatChannelService.class).registerChatChannel(channel);
+        Universe.get(ChatChannelService.class).registerChatChannel(this.channel);
+        Universe.get(ChatChannelService.class).setDefaultChat(this.channel);
     }
 }

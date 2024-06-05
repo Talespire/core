@@ -5,28 +5,27 @@ import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import lombok.Getter;
 import org.slf4j.Logger;
-import studio.lunarlabs.universe.UniverseVelocity;
-import studio.lunarlabs.universe.UniverseVelocityPlugin;
 
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
- * @date 4/19/2024
  * @author Moose1301
+ * @date 4/19/2024
  */
 
 @Plugin(id = "core",
         name = "Core Velocity",
         version = "0.0.1",
-        authors = "Talespire"
+        authors = "Talespire",
+        dependencies = {
+                @Dependency(id = "universe")
+        }
 )
 @Getter
 public class CoreVelocityPlugin {
@@ -36,6 +35,7 @@ public class CoreVelocityPlugin {
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataFolder;
+
 
     @Inject
     public CoreVelocityPlugin(ProxyServer server, Logger logger, @DataDirectory Path dataFolder) {
@@ -49,7 +49,7 @@ public class CoreVelocityPlugin {
     )
     public void initPlugin(ProxyInitializeEvent event) {
         instance = this;
-        new UniverseVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder);
+        new CoreVelocity(this.getClass().getAnnotation(Plugin.class), server, dataFolder, logger);
     }
 
     @Subscribe

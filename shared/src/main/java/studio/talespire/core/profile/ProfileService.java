@@ -5,26 +5,42 @@ import com.mongodb.client.model.ReplaceOptions;
 import com.mongodb.reactivestreams.client.MongoCollection;
 import org.bson.Document;
 import reactor.core.publisher.Mono;
+import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.lunarlabs.universe.util.Statics;
 import studio.talespire.core.Core;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.adapter.GrantAdapter;
+import studio.talespire.core.server.ServerService;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Moose1301
  * @date 4/25/2024
  */
 public class ProfileService {
+    public static final Duration AUTOSAVE_DURATION  = Duration.of(10, ChronoUnit.SECONDS);
+    private final static String CACHE_KEY = "core:profiles";
+
     private final MongoCollection<Document> profileCollection;
     private final Map<UUID, Profile> profiles = new ConcurrentHashMap<>();
 
     public ProfileService() {
         this.profileCollection = Core.getInstance().getDatabase().getCollection("profiles");
         Statics.registerTypeAdapter(Grant.class, new GrantAdapter());
+    }
+    public void saveRequiredProfiles() {
+        for (Profile value : this.profiles.values()) {
+            if(!value.isRequireSaving()) continue;
+            this.saveProfile(value);
+        }
     }
 
     public Profile getProfile(UUID uuid) {
@@ -58,9 +74,34 @@ public class ProfileService {
                 Document.parse(Statics.plainGson().toJson(profile)),
                 new ReplaceOptions().upsert(true)
         )).subscribe();
+        profile.setRequireSaving(false);
 
     }
+
     public void uncacheProfile(UUID playerId) {
         this.profiles.remove(playerId);
     }
+
+    public void cachePlayerServer(UUID playerId) {
+        Universe.get(RedisService.class).executeBackendCommand(jedis -> {
+            jedis.hset(CACHE_KEY, playerId.toString(), Universe.get(ServerService.class).getCurrentServer().getServerId());
+            return null;
+        });
+    }
+
+    public void uncachePlayerServer(UUID playerId) {
+        Universe.get(RedisService.class).executeBackendCommand(jedis -> {
+            jedis.hdel(CACHE_KEY, playerId.toString());
+            return null;
+        });
+    }
+
+    public boolean isPlayerServerCached(UUID playerId) {
+        return Universe.get(RedisService.class).executeBackendCommand(jedis -> jedis.hexists(CACHE_KEY, playerId.toString()));
+    }
+
+    public String getPlayerServer(UUID playerId) {
+        return Universe.get(RedisService.class).executeBackendCommand(jedis -> jedis.hget(CACHE_KEY, playerId.toString()));
+    }
+
 }

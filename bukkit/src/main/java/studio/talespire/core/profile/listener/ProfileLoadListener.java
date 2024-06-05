@@ -50,11 +50,15 @@ public class ProfileLoadListener implements Listener {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, component);
             return;
         }
-
+        Universe.get(ProfileService.class).cachePlayerServer(event.getUniqueId());
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        Profile profile = Universe.get(ProfileService.class).getProfile(event.getPlayer().getUniqueId());
+        if(profile.isRequireSaving()) {
+            Tasks.runAsync(() -> Universe.get(ProfileService.class).saveProfile(profile));
+        }
         Universe.get(ProfileService.class).uncacheProfile(event.getPlayer().getUniqueId());
     }
 

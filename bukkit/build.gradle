@@ -7,6 +7,10 @@ version = '0.0.1'
 
 repositories {
     mavenCentral()
+    maven {
+        name = "citizens-repo"
+        url = "https://maven.citizensnpcs.co/repo"
+    }
 }
 
 dependencies {
@@ -20,5 +24,9 @@ dependencies {
 
     compileOnly "studio.talespire.profile:shared:0.0.1"
     compileOnly "com.elmakers.math:exp4j:1.0"
+
+    compileOnly("net.citizensnpcs:citizens-main:2.0.34-SNAPSHOT") {
+        exclude group: '*', module: '*'
+    }
 
 }

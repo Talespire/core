@@ -7,12 +7,16 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.data.redis.RedisService;
 import studio.talespire.core.profile.grant.Grant;
 import studio.talespire.core.profile.grant.GrantType;
 import studio.talespire.core.profile.grant.types.GrantPermission;
 import studio.talespire.core.profile.grant.types.GrantRank;
 import studio.talespire.core.profile.model.Punishment;
 import studio.talespire.core.profile.model.PunishmentType;
+import studio.talespire.core.profile.packet.friend.ProfileFriendAcceptPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendDenyPacket;
+import studio.talespire.core.profile.packet.friend.ProfileFriendRequestCancelPacket;
 import studio.talespire.core.rank.Rank;
 import studio.talespire.core.setting.Setting;
 import studio.talespire.core.setting.SettingOption;
@@ -38,6 +42,12 @@ public abstract class Profile {
     protected final Set<Punishment> punishments;
     protected final Set<Grant> grants;
 
+    protected Set<UUID> bestFriends;
+    protected Set<UUID> friends;
+    protected Set<UUID> outGoingFriendRequests;
+    protected Set<UUID> incomingFriendRequests;
+    protected Set<UUID> ignored;
+
     protected long firstSeen;
     protected long lastSeen;
 
@@ -47,9 +57,11 @@ public abstract class Profile {
     @Nullable
     protected UUID guildId;
 
+
     protected transient Rank rank;
 
     protected transient Map<String, Boolean> permissions;
+    protected transient boolean requireSaving;
 
 
 
@@ -60,6 +72,11 @@ public abstract class Profile {
         this.lastSeen = System.currentTimeMillis();
         this.ipAddresses = new HashSet<>();
         this.punishments = new HashSet<>();
+        this.bestFriends = new HashSet<>();
+        this.friends = new HashSet<>();
+        this.outGoingFriendRequests = new HashSet<>();
+        this.incomingFriendRequests = new HashSet<>();
+        this.ignored = new HashSet<>();
         this.grants = new HashSet<>();
         this.settings = new ConcurrentHashMap<>();
         for (Setting<?> setting : Universe.get(SettingService.class).getSettings()) {
@@ -71,6 +88,18 @@ public abstract class Profile {
         for (Setting<?> setting : Universe.get(SettingService.class).getSettings()) {
             if (this.settings.containsKey(setting)) continue;
             this.settings.put(setting, setting.getDefaultValue());
+        }
+
+        //Profile from d801e2d and before won't have these
+        if(this.friends == null) {
+            this.friends = new HashSet<>();
+            this.ignored = new HashSet<>();
+        }
+
+        if (bestFriends == null) {
+            bestFriends = new HashSet<>();
+            this.outGoingFriendRequests = new HashSet<>();
+            this.incomingFriendRequests = new HashSet<>();
         }
 
         this.rank = calculateRank();
@@ -190,6 +219,9 @@ public abstract class Profile {
         }
         return (SettingOption<T>) settings.get(setting);
     }
+    public <T> void setSetting(Setting<T> setting, SettingOption<?> option) {
+        this.settings.put(setting, option);
+    }
 
     @SuppressWarnings("unchecked")
     public <T> SettingOption<T> getSetting(Class<? extends Setting<T>> setting) {
@@ -205,5 +237,38 @@ public abstract class Profile {
             return null;
         }
         return Universe.get(GuildService.class).getGuild(this.guildId);
+    }
+
+
+    public void acceptRequest(UUID senderId) {
+        this.friends.add(senderId);
+        this.outGoingFriendRequests.remove(senderId);
+        this.requireSaving = true;
+    }
+    public void denyRequest(UUID senderId) {
+        this.outGoingFriendRequests.remove(senderId);
+        this.requireSaving = true;
+    }
+
+    public void removeFriend(UUID receiverId) {
+        this.friends.remove(receiverId);
+        this.requireSaving = true;
+    }
+    public void addRequest(UUID senderId) {
+        this.incomingFriendRequests.add(senderId);
+        this.requireSaving = true;
+    }
+
+    public UUID getFriend(int index) {
+        return new ArrayList<>(this.friends).get(index);
+    }
+
+    public void sendRequest(UUID targetId) {
+        this.outGoingFriendRequests.add(targetId);
+        this.requireSaving = true;
+    }
+
+    public void markToSave() {
+        this.requireSaving = true;
     }
 }

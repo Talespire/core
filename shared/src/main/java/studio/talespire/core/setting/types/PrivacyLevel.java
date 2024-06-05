@@ -15,6 +15,7 @@ import studio.talespire.core.util.StringUtils;
 @Getter
 public enum PrivacyLevel {
     EVERYONE,
+    GUILD,
     FRIENDS,
     STAFF,
     NONE;
@@ -38,17 +39,28 @@ public enum PrivacyLevel {
     }
 
     public boolean doesMatch(Profile fromProfile, Profile targetProfile) {
-        if(this == EVERYONE) {
-            return true;
-        } else if(this == NONE) {
+        if (fromProfile.getIgnored().contains(targetProfile.getUuid()) || targetProfile.getIgnored().contains(fromProfile.getUuid())) {
             return false;
         }
-        if(this.ordinal() <= STAFF.ordinal()) {
+        if (this == EVERYONE) {
+            return true;
+        } else if (this == NONE) {
+            return false;
+        }
+        if (this.ordinal() <= GUILD.ordinal() && targetProfile.getGuildId() != null && fromProfile.getGuildId() != null) {
+            if(targetProfile.getGuildId().equals(fromProfile.getGuildId())) {
+                return true;
+            }
+        }
+        if (this.ordinal() <= FRIENDS.ordinal() && fromProfile.getFriends().contains(targetProfile.getUuid())) {
+            return true;
+        }
+        if (this.ordinal() <= STAFF.ordinal()) {
             return fromProfile.getRank().isStaff();
         }
 
-        //TODO Friend System
-        return true;
+
+        return false;
 
     }
 }

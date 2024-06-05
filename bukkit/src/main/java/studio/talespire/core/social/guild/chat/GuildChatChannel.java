@@ -80,7 +80,7 @@ public class GuildChatChannel extends ChatChannel {
     }
     @Override
     public void sendMessage(Player player, Component message) {
-        super.sendMessage(player, message);
+       // super.sendMessage(player, message);
         Profile profile = Universe.get(ProfileService.class).getProfile(player.getUniqueId());
         if(profile == null) {
             return;

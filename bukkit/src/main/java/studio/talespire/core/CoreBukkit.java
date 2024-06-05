@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.chat.BukkitChatService;
 import studio.talespire.core.effects.EffectService;
+import studio.talespire.core.npc.CitizensNPCService;
 import studio.talespire.core.placeholder.PlaceholderService;
 import studio.talespire.core.profile.BukkitProfile;
 import studio.talespire.core.profile.BukkitProfileService;
@@ -28,7 +29,7 @@ import java.util.UUID;
 public class CoreBukkit extends Core {
     public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
     public CoreBukkit(JavaPlugin plugin) {
-        super(plugin.getDataFolder().toPath());
+        super(plugin.getDataFolder().toPath(), plugin.getSLF4JLogger());
 
         //-- Server
         Universe.get().getRegistry().put(PlaceholderService.class, new PlaceholderService());
@@ -47,6 +48,7 @@ public class CoreBukkit extends Core {
 
         //-- Effects
         Universe.get().getRegistry().put(EffectService.class, new EffectService(plugin));
+        Universe.get().getRegistry().put(CitizensNPCService.class, new CitizensNPCService(plugin));
     }
 
     @Override

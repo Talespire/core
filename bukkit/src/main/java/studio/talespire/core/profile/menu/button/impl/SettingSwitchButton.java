@@ -5,12 +5,16 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import studio.lunarlabs.universe.menus.api.Button;
+import studio.talespire.core.profile.Profile;
 import studio.talespire.core.setting.Setting;
 import studio.talespire.core.setting.SettingOption;
 
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +24,7 @@ import java.util.List;
  */
 @AllArgsConstructor
 public class SettingSwitchButton extends Button {
+    private Profile profile;
     private Setting<?> setting;
     private SettingOption<?> option;
     @Override
@@ -46,5 +51,10 @@ public class SettingSwitchButton extends Button {
         stack.setItemMeta(meta);
 
         return stack;
+    }
+
+    @Override
+    public void clicked(Player player, ClickType clickType) {
+        profile.setSetting(setting, setting.getRawNext(option));
     }
 }

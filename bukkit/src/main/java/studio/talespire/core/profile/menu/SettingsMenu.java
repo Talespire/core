@@ -35,11 +35,14 @@ public class SettingsMenu extends Menu {
         for (Map.Entry<Setting<?>, SettingOption<?>> entry : profile.getSettings().entrySet()) {
             buttons.put(getSlot(index, 1), new SettingInfoButton(entry.getKey()));
             buttons.put(getSlot(index, 2), new SettingValueButton(entry.getValue()));
-            buttons.put(getSlot(index, 3), new SettingSwitchButton(entry.getKey(), entry.getValue()));
+            buttons.put(getSlot(index, 3), new SettingSwitchButton(profile, entry.getKey(), entry.getValue()));
             index++;
         }
         return buttons;
     }
 
-
+    @Override
+    public boolean isUpdateAfterClick() {
+        return true;
+    }
 }
