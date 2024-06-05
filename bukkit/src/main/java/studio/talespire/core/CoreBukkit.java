@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.chat.BukkitChatService;
+import studio.talespire.core.effects.EffectService;
 import studio.talespire.core.placeholder.PlaceholderService;
 import studio.talespire.core.profile.BukkitProfile;
 import studio.talespire.core.profile.BukkitProfileService;
@@ -44,6 +45,8 @@ public class CoreBukkit extends Core {
         //-- Chat
         Universe.get().getRegistry().put(BukkitChatService.class, new BukkitChatService(plugin));
 
+        //-- Effects
+        Universe.get().getRegistry().put(EffectService.class, new EffectService(plugin));
     }
 
     @Override

@@ -1,0 +1,63 @@
+package studio.talespire.core.effects.effect;
+
+import org.bukkit.Particle;
+import org.bukkit.Location;
+import org.bukkit.util.Vector;
+
+import studio.talespire.core.effects.Effect;
+import studio.talespire.core.effects.EffectType;
+import studio.talespire.core.effects.EffectService;
+import studio.talespire.core.effects.util.RandomUtils;
+
+public class ShieldEffect extends Effect {
+
+    /**
+     * Radius of the shield
+     */
+    public double radius = 3;
+
+    /**
+     * Particles to display
+     */
+    public int particles = 50;
+
+    /**
+     * Set to false for a half-sphere and true for a complete sphere
+     */
+    public boolean sphere = false;
+
+    // Set to true to reverse the direction of the shield (works only if sphere is set to false)
+    public boolean reverse = false;
+
+    public ShieldEffect(EffectService effectService) {
+        super(effectService);
+        type = EffectType.REPEATING;
+        particle = Particle.FLAME;
+        iterations = 500;
+        period = 1;
+    }
+
+    @Override
+    public void onRun() {
+        Location location = getLocation();
+        Vector v;
+
+        if (location == null) {
+            cancel();
+            return;
+        }
+
+        for (int i = 0; i < particles; i++) {
+            v = RandomUtils.getRandomVector().multiply(radius);
+            if (!sphere) {
+                if (reverse) v.setY(Math.abs(v.getY()) * -1);
+                else v.setY(Math.abs(v.getY()));
+            }
+
+            location.add(v);
+            display(particle, location);
+            location.subtract(v);
+        }
+    }
+
+}
