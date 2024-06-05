@@ -78,4 +78,11 @@ public class EffectCommand {
         waveEffect.start();
 
     }
+
+    @Children(names = "ripple", description = "Start a ripple effect.")
+    public void startRippleEffect(Player player) {
+        RippleEffect rippleEffect = new RippleEffect(Universe.get(EffectService.class));
+        rippleEffect.setLocation(player.getLocation());
+        rippleEffect.start();
+    }
 }

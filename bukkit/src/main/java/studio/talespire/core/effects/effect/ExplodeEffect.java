@@ -4,10 +4,13 @@ import org.bukkit.Sound;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 
+import org.bukkit.util.Vector;
 import studio.talespire.core.effects.Effect;
 import studio.talespire.core.effects.EffectType;
 import studio.talespire.core.effects.EffectService;
 import studio.talespire.core.effects.util.RandomUtils;
+
+import java.util.List;
 
 public class ExplodeEffect extends Effect {
 
