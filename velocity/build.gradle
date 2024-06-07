@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation project(":shared")
+
     compileOnly("studio.talespire.universe:universe-velocity:0.0.1")
     compileOnly("studio.talespire.universe:universe-shared:0.0.1")
 

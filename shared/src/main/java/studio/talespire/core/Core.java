@@ -13,7 +13,6 @@ import studio.talespire.core.rank.RankService;
 import studio.talespire.core.server.ServerService;
 import studio.talespire.core.setting.SettingService;
 import studio.talespire.core.skin.CustomSkinService;
-import studio.talespire.core.skin.model.CustomSkin;
 import studio.talespire.core.social.guild.GuildService;
 
 import java.lang.reflect.Type;

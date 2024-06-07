@@ -18,6 +18,7 @@ import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
 import studio.talespire.core.social.global.BukkitGlobalService;
 import studio.talespire.core.social.guild.BukkitGuildService;
+import studio.talespire.core.tablist.TabListService;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -49,6 +50,9 @@ public class CoreBukkit extends Core {
         //-- Effects
         Universe.get().getRegistry().put(EffectService.class, new EffectService(plugin));
         Universe.get().getRegistry().put(CitizensNPCService.class, new CitizensNPCService(plugin));
+
+        //-- TabList and Scoreboard
+        Universe.get().getRegistry().put(TabListService.class, new TabListService(plugin));
     }
 
     @Override
