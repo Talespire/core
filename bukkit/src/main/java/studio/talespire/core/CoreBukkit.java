@@ -1,5 +1,6 @@
 package studio.talespire.core;
 
+import com.github.retrooper.packetevents.PacketEventsAPI;
 import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.Style;
@@ -29,7 +30,8 @@ import java.util.UUID;
  */
 public class CoreBukkit extends Core {
     public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
-    public CoreBukkit(JavaPlugin plugin) {
+
+    public CoreBukkit(JavaPlugin plugin, PacketEventsAPI<?> packetEventsAPI) {
         super(plugin.getDataFolder().toPath(), plugin.getSLF4JLogger());
 
         //-- Server
@@ -52,7 +54,7 @@ public class CoreBukkit extends Core {
         Universe.get().getRegistry().put(CitizensNPCService.class, new CitizensNPCService(plugin));
 
         //-- TabList and Scoreboard
-        Universe.get().getRegistry().put(TabListService.class, new TabListService(plugin));
+        Universe.get().getRegistry().put(TabListService.class, new TabListService(plugin, packetEventsAPI));
     }
 
     @Override
@@ -63,5 +65,10 @@ public class CoreBukkit extends Core {
     @Override
     public Profile createProfile(UUID playerId, String username) {
         return new BukkitProfile(playerId, username);
+    }
+
+    @Override
+    public void disable() {
+        Universe.get().getRegistry().get(TabListService.class).unload();
     }
 }
