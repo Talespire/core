@@ -30,15 +30,15 @@ public class CorePlugin extends JavaPlugin {
     private static CorePlugin instance;
     private PacketEventsAPI<?> packetEventsAPI;
 
-    @Override
-    public void onLoad() {
-        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
-
-        this.packetEventsAPI = PacketEvents.getAPI();
-        this.packetEventsAPI.getSettings().bStats(false).checkForUpdates(false);
-
-        this.packetEventsAPI.load();
-    }
+//    @Override
+//    public void onLoad() {
+//        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+//
+//        this.packetEventsAPI = PacketEvents.getAPI();
+//        this.packetEventsAPI.getSettings().bStats(false).checkForUpdates(false);
+//
+//        this.packetEventsAPI.load();
+//    }
 
     @Override
     public void onEnable() {

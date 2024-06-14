@@ -1,5 +1,6 @@
 package studio.talespire.core.effects.effect;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.util.Vector;
@@ -22,12 +23,15 @@ public class RippleEffect extends Effect {
 
     protected float step = 0;
 
+    public Color color;
+
     public RippleEffect(EffectService effectService) {
         super(effectService);
         type = EffectType.REPEATING;
-        particle = Particle.WAX_ON;
+        particle = Particle.FIREWORKS_SPARK;
         iterations = 100;
         period = 1;
+        color = Color.YELLOW;
     }
 
     @Override
@@ -54,10 +58,12 @@ public class RippleEffect extends Effect {
 
         for (Vector v : createCircle(y, radius)) {
             location.add(v);
-            display(particle, location);
+            display(particle, location, color);
+            location.subtract(v);
             step++;
         }
 
+        location.add(0, 0.1, 0);
     }
 
     public List<Vector> createCircle(double y, double radius) {
