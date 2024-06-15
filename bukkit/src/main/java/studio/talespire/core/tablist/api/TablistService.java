@@ -23,10 +23,12 @@ import studio.talespire.core.tablist.api.packets.TablistHandler;
 public class TablistService {
 
     private final BukkitListener listener;
-    private final TablistHandler handler;
+    @Getter private final TablistHandler handler;
     private final TablistConfig config = Universe.get(TablistConfig.class);
+    private final JavaPlugin plugin;
 
     public TablistService(JavaPlugin plugin) {
+        this.plugin = plugin;
         handler = new TablistHandler(plugin);
         this.listener = new BukkitListener();
         ProtocolManager manager = ProtocolLibrary.getProtocolManager();

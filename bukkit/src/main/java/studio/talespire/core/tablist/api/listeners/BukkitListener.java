@@ -1,6 +1,9 @@
 package studio.talespire.core.tablist.api.listeners;
 
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -197,6 +200,12 @@ public class BukkitListener implements Listener {
     private static List<FakePlayer> generateFakePlayerList(int size) {
         List<FakePlayer> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
+            if (i == 0 || i == 20) {
+                list.add(new FakePlayer(
+                        null, Component.text("Players ", NamedTextColor.GREEN,
+                        TextDecoration.BOLD).append(Component.text("(" + Bukkit.getOnlinePlayers().size() +")", NamedTextColor.WHITE)))
+                );
+            }
             list.add(FakePlayer.randomFakePlayer());
         }
         return list;

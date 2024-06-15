@@ -19,7 +19,9 @@ import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
 import studio.talespire.core.social.global.BukkitGlobalService;
 import studio.talespire.core.social.guild.BukkitGuildService;
+import studio.talespire.core.tablist.api.TablistService;
 import studio.talespire.core.tablist.api.config.TablistConfig;
+import studio.talespire.core.tablist.bukkit.TablistBukkitService;
 //import studio.talespire.core.tablist.TabListService;
 
 import java.lang.reflect.Type;
@@ -58,6 +60,9 @@ public class CoreBukkit extends Core {
                 TablistConfig.class,
                 Universe.get().getRegistry().get(ConfigService.class).loadConfiguration(TablistConfig.class, "tablist", plugin.getDataFolder().toPath())
         );
+
+        Universe.get().getRegistry().put(TablistService.class, new TablistService(plugin));
+        Universe.get().getRegistry().put(TablistBukkitService.class, new TablistBukkitService(plugin));
     }
 
     @Override
