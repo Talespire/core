@@ -49,6 +49,10 @@ allprojects {
         maven {
             url 'https://repo.mincats.eu/mirrors'
         }
+
+        maven {
+            url "https://repo.dmulloy2.net/repository/public/"
+        }
     }
 }
 
@@ -72,6 +76,8 @@ subprojects {
         compileOnly "org.projectlombok:lombok:1.18.32"
         annotationProcessor "org.projectlombok:lombok:1.18.32"
         compileOnly "org.jetbrains:annotations:13.0"
+
+        compileOnly "com.comphenix.protocol:ProtocolLib:5.0.0";
 
         compileOnly("studio.talespire.universe:universe-annotations:0.0.1")
         annotationProcessor("studio.talespire.universe:universe-annotations:0.0.1")

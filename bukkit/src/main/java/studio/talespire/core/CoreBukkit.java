@@ -6,6 +6,7 @@ import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.plugin.java.JavaPlugin;
 import studio.lunarlabs.universe.Universe;
+import studio.lunarlabs.universe.config.ConfigService;
 import studio.talespire.core.chat.BukkitChatService;
 import studio.talespire.core.effects.EffectService;
 import studio.talespire.core.npc.CitizensNPCService;
@@ -18,6 +19,8 @@ import studio.talespire.core.server.BukkitServerProvider;
 import studio.talespire.core.server.ServerService;
 import studio.talespire.core.social.global.BukkitGlobalService;
 import studio.talespire.core.social.guild.BukkitGuildService;
+import studio.talespire.core.tablist.api.config.TablistConfig;
+//import studio.talespire.core.tablist.TabListService;
 
 import java.lang.reflect.Type;
 import java.util.UUID;
@@ -28,6 +31,7 @@ import java.util.UUID;
  */
 public class CoreBukkit extends Core {
     public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
+
     public CoreBukkit(JavaPlugin plugin) {
         super(plugin.getDataFolder().toPath(), plugin.getSLF4JLogger());
 
@@ -49,6 +53,11 @@ public class CoreBukkit extends Core {
         //-- Effects
         Universe.get().getRegistry().put(EffectService.class, new EffectService(plugin));
         Universe.get().getRegistry().put(CitizensNPCService.class, new CitizensNPCService(plugin));
+
+        Universe.get().getRegistry().put(
+                TablistConfig.class,
+                Universe.get().getRegistry().get(ConfigService.class).loadConfiguration(TablistConfig.class, "tablist", plugin.getDataFolder().toPath())
+        );
     }
 
     @Override
