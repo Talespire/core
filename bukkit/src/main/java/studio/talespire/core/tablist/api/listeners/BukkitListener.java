@@ -78,14 +78,19 @@ public class BukkitListener implements Listener {
     public void onPlayerJoinEventForFakePlayerPurposes(PlayerJoinEvent event) {
         Player p = event.getPlayer();
         World world = p.getWorld();
+
         if (tablistConfig.getTablist().isFillWithFakePlayers()) {
             if (tablistConfig.getTablist().isTablistPerWorld()) {
                 List<FakePlayer> fakePlayers = this.worldPacketMap.get(world);
+
                 if (fakePlayers.isEmpty()) return; // No left fake players to show
+
                 FakePlayer removedFakePlayer = fakePlayers.remove(0);
+
                 world.getPlayers().forEach(player -> {
                     sendRemovePacket(removedFakePlayer, player);
                 });
+
                 fakePlayers.forEach(fakePlayer ->{
                     sendAddPacket(fakePlayer, p);
                 });
@@ -200,12 +205,6 @@ public class BukkitListener implements Listener {
     private static List<FakePlayer> generateFakePlayerList(int size) {
         List<FakePlayer> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            if (i == 0 || i == 20) {
-                list.add(new FakePlayer(
-                        null, Component.text("Players ", NamedTextColor.GREEN,
-                        TextDecoration.BOLD).append(Component.text("(" + Bukkit.getOnlinePlayers().size() +")", NamedTextColor.WHITE)))
-                );
-            }
             list.add(FakePlayer.randomFakePlayer());
         }
         return list;
