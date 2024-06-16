@@ -14,8 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class RankSortingUtil {
     public List<Player> sortPlayersByRank(List<Player> players) {
-        RankSortingUtil rs = new RankSortingUtil();
-        rs.sort(players, 0, players.size() - 1);
+        sort(players, 0, players.size() - 1);
         return players;
     }
 

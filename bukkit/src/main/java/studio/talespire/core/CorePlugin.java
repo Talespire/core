@@ -19,7 +19,8 @@ import studio.lunarlabs.universe.annotation.BukkitPlugin;
         depend = "Universe",
         author = "Talespire Development Team",
         softDepend = {
-                "Citizens"
+                "Citizens",
+                "PlaceholderAPI"
         }
 )
 public class CorePlugin extends JavaPlugin {

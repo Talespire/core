@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.inventory.Inventory;
 import studio.lunarlabs.universe.Universe;
 import studio.talespire.core.tablist.api.config.TablistConfig;
 import studio.talespire.core.tablist.api.packets.PacketSender;
@@ -73,6 +74,7 @@ public class BukkitListener implements Listener {
             this.worldPacketMap.remove(event.getWorld());
         }
     }
+
 
     @EventHandler
     public void onPlayerJoinEventForFakePlayerPurposes(PlayerJoinEvent event) {
@@ -205,7 +207,20 @@ public class BukkitListener implements Listener {
     private static List<FakePlayer> generateFakePlayerList(int size) {
         List<FakePlayer> list = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            list.add(FakePlayer.randomFakePlayer());
+
+            // Tabs
+            if (i == 0 || i == 20) {
+                list.add(new FakePlayer(null, Component.text("      Players", NamedTextColor.WHITE, TextDecoration.BOLD)));
+            } else if (i == 40 || i == 50) {
+                list.add(new FakePlayer(null, Component.text("       Info", NamedTextColor.AQUA, TextDecoration.BOLD)));
+            } else {
+                list.add(FakePlayer.randomFakePlayer());
+            }
+
+//
+//            if (i <= 61) {
+//                list.add(FakePlayer.randomFakePlayer());
+//            }
         }
         return list;
     }

@@ -27,7 +27,7 @@ public class TabListPacket implements PacketSender {
     }
 
     @Override
-    public void sendPacketOnce(Player player) throws InvocationTargetException {
+    public void sendPacketOnce(Player player) {
         PlaceholdersUtil.compose(
                 PlaceholdersUtil.getPlayerPlaceholders(), PlaceholdersUtil.getServerplaceholders(), this.tablistTemplate.getPlaceholderCallback()
         ).callback(this.tablistTemplate, player);

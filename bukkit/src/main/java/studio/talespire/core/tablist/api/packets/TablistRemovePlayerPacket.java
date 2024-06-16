@@ -34,7 +34,7 @@ public class TablistRemovePlayerPacket implements PacketSender {
     }
 
     @Override
-    public void sendPacketOnce(Player player) throws InvocationTargetException {
+    public void sendPacketOnce(Player player) {
         protocolManager.sendServerPacket(player, packet);
     }
 }
