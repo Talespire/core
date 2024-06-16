@@ -20,7 +20,7 @@ import studio.lunarlabs.universe.annotation.BukkitPlugin;
         author = "Talespire Development Team",
         softDepend = {
                 "Citizens",
-                "PlaceholderAPI"
+                "ProtocolLib"
         }
 )
 public class CorePlugin extends JavaPlugin {
