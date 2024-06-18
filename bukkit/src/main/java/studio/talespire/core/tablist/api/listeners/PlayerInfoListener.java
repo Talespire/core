@@ -39,39 +39,16 @@ public class PlayerInfoListener extends PacketAdapter {
 
         List<PlayerInfoData> playerInfoDataList = packetContainer.getPlayerInfoDataLists().read(1);
         List<PlayerInfoData> newPlayerInfoDataList = new ArrayList<>();
-        if (config.getTablist().isTablistPerWorld()) {
-            for (PlayerInfoData data : playerInfoDataList) {
-                Player dataPlayer = Bukkit.getPlayer(data.getProfile().getName());
-                if (dataPlayer != null) {
-                    if (dataPlayer.getWorld().equals(destinationPlayer.getWorld())) {
-                        if (config.getTablist().isUseRealLatency()) {
-                            newPlayerInfoDataList.add(data);
-                            continue;
-                        }
-                        PlayerInfoData newData = new PlayerInfoData(
-                                data.getProfile(),
-                                config.getTablist().getDefaultLatency().getLatency(),
-                                data.getGameMode(),
-                                data.getDisplayName()
-                        );
-                        newPlayerInfoDataList.add(newData);
-                    }
-                } else {
-                    newPlayerInfoDataList.add(data);
-                }
-            }
-        } else {
-            for (PlayerInfoData data : playerInfoDataList) {
-                if (config.getTablist().isUseRealLatency()) {
-                    newPlayerInfoDataList.add(data);
-                } else {
-                    PlayerInfoData newData = new PlayerInfoData(
-                            data.getProfile(),
-                            config.getTablist().getDefaultLatency().getLatency(),
-                            data.getGameMode(),
-                            data.getDisplayName()
-                    );
-                }
+        for (PlayerInfoData data : playerInfoDataList) {
+            if (config.getTablist().isUseRealLatency()) {
+                newPlayerInfoDataList.add(data);
+            } else {
+                PlayerInfoData newData = new PlayerInfoData(
+                        data.getProfile(),
+                        config.getTablist().getDefaultLatency().getLatency(),
+                        data.getGameMode(),
+                        data.getDisplayName()
+                );
             }
         }
         packetContainer.getPlayerInfoDataLists().write(1, newPlayerInfoDataList);

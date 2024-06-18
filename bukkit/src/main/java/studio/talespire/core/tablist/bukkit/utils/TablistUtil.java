@@ -12,7 +12,6 @@ import studio.talespire.core.tablist.bukkit.listeners.TablistManager;
  */
 public class TablistUtil {
     public static void updatePlayerTablist(TablistService manager, TablistConfig config, Player player) {
-        var worldName = player.getWorld().getName();
         var header = config.getHeaderFooter().getHeader();
         var footer = config.getHeaderFooter().getFooter();
         manager.getHandler().setPlayerTablist(player, TablistTemplate.fromLists(header, footer));

@@ -28,7 +28,6 @@ public class NamedEntityListener extends PacketAdapter {
 
     @Override
     public void onPacketSending(PacketEvent event) {
-        if (config.getTablist().isTablistPerWorld()) return;
         var packet = event.getPacket();
         var targetPlayer = event.getPlayer();
         var entityUUID = packet.getUUIDs().read(0);

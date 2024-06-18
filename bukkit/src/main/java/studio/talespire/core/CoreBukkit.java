@@ -57,12 +57,12 @@ public class CoreBukkit extends Core {
         Universe.get().getRegistry().put(CitizensNPCService.class, new CitizensNPCService(plugin));
 
         //-- Tablist
-        Universe.get().getRegistry().put(TablistService.class, new TablistService(plugin));
-        Universe.get().getRegistry().put(TablistBukkitService.class, new TablistBukkitService(plugin));
         Universe.get().getRegistry().put(
                 TablistConfig.class,
                 Universe.get(ConfigService.class).loadConfiguration(TablistConfig.class, "tablist", plugin.getDataFolder().toPath())
         );
+        Universe.get().getRegistry().put(TablistService.class, new TablistService(plugin));
+        Universe.get().getRegistry().put(TablistBukkitService.class, new TablistBukkitService(plugin));
     }
 
     @Override

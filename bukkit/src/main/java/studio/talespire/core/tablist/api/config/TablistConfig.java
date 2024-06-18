@@ -32,7 +32,6 @@ public class TablistConfig implements StaticConfiguration {
 
     @Getter
     public static class Tablist {
-        private final boolean tablistPerWorld = false;
         private final boolean useRealLatency = false;
         private final LatencyEnum defaultLatency = LatencyEnum.ONE;
         private final boolean fillWithFakePlayers = true;
