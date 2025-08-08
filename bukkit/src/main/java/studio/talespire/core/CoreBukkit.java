@@ -29,7 +29,7 @@ import java.util.UUID;
 
 /**
  * @date 4/18/2024
- * @author Moose1301
+ * @author ALfie and Luna
  */
 public class CoreBukkit extends Core {
     public static final Component DEFAULT_COMPONENT = Component.text("").style(Style.style().decoration(TextDecoration.ITALIC, false));
